@@ -12,12 +12,6 @@
         font-weight: 300;
         font-family: "Open Sans", sans-serif;
         color: #121212;
-        /* cursor: url(https://rsha256.github.io/teapot-clear32.png), default!important;
-      cursor: url(https://rsha256.github.io/teapot-clear32.png), pointer!important; */
-        /* cursor: url(https://rsha256.github.io/dragon-clear32.png), default!important;
-      cursor: url(https://rsha256.github.io/dragon-clear32.png), pointer!important; */
-        cursor: url(https://rsha256.github.io/cloth-dropped-32.png), default !important;
-        cursor: url(https://rsha256.github.io/cloth-dropped-32.png), pointer !important;
       }
       h1,
       h2,
@@ -84,35 +78,26 @@
       rel="stylesheet"
     />
 
-    <script>
-      MathJax = {
-        tex: {
-          inlineMath: [
-            ["$", "$"],
-            ["\\(", "\\)"],
-          ],
-        },
-      };
-    </script>
-    <script
-      id="MathJax-script"
-      async
-      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"
-    ></script>
+    <script type="text/x-mathjax-config">
+		MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+	  </script>
+	  <script type="text/javascript"
+		src="http://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+	  </script>
   </head>
 
   <body style="padding-top: 50px">
-    <div align="middle">
+    <!-- <div align="middle">
       <img
         src="https://drive.google.com/uc?id=1DZQwwl_aq1IEPGaZFk4bAYzEJNrqHRN4"
         align="middle"
         width="1000vw"
       />
-    </div>
+    </div> -->
 
-    <h1 align="left">CS 184: Computer Graphics and Imaging, Spring 2023</h1>
-    <h1 align="left">Project 4: Cloth Simulator</h1>
-    <h2 align="left">Calvin Yan, Rahul Shah, CS184-cloth-droppers</h2>
+    <h1 align="left">CS 184: Computer Graphics and Imaging, Spring 2024</h1>
+    <h1 align="left">Homework 1: Rasterizer</h1>
+    <h2 align="left">Bill Shao, Jonathan Pei, Muc S'ojog</h2>
 
     <hr />
     <br />
@@ -120,23 +105,13 @@
     <div>
       <h2 align="left">Overview</h2>
       <p>
-        A high-level overview of what we implemented in this project would be a
-        cloth simulator. In real-time. That uses mass-spring dynamics and
-        physical constraints that model what happens to cloth in real life. And
-        utilizes tricks seen in lecture to make the simulation more efficient.
-        From numerical integration to collision detection, we've implemented it
-        all.
+        Hi Billington city! You can do <i>italics</i>, <b>bold</b>, <u>underline</u>, <code>code</code>, and latex: $x = 5.$
         <br />
-        But at the end of the day, we've made a cloth simulator. As a whole,
-        this means that we have implemented a cloth simulator that can be used
-        to realistically simulate cloth in real-time.
+		<br />
+        I just breaklined twice.
         <br />
-        After completing the project, we have learned many interesting things
-        related to physics and simulating movement. We especially learned a lot
-        from our mistakes as that allowed us to correct our understanding about
-        the true physics behind cloth dropping. We also have thoughts on how
-        games are made and how they work under the hood -- we're pretty proud of
-        what we've accomplished!
+		<br />
+        Here's a nice link: <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">not suspicious</a>.
       </p>
     </div>
 
@@ -148,20 +123,12 @@
 
     <h3>Overview</h3>
     <p>
-      We started out this project by building an evenly grid of masses connected
-      by springs to model a piece of cloth. We made sure to check if the point
-      is pinned and if the cloth's orientation is <code>HORIZONTAL</code>, then
-      we set the y coordinate for all point masses to 1.
-      <br />
-      We then construct the spring with <i>Structural</i>, <i>Shearing</i>, and
-      <i>Bending</i> constraint types using <code>emplace_back</code>.
+      Another overview ig.
     </p>
 
     <blockquote>
       <b>
-        Take some screenshots of <i>scene/pinned2.json</i> from a viewing angle
-        where you can clearly see the cloth wireframe to show the structure of
-        your point masses and springs.
+        Here's a blockquote (you can customize this above).
       </b>
     </blockquote>
 
@@ -170,57 +137,23 @@
         <tr align="center">
           <td>
             <img
-              src="images/t1-zoomed-in_p2.png"
+              src="images/jonny_banana.jpeg"
               align="middle"
               width="300vw"
             />
-          </td>
-          <td>
-            <img src="images/t1-halfway_p2.png" align="middle" width="300vw" />
-            <figcaption>Default settings ($\text{ks} = 5,000$)</figcaption>
-          </td>
-          <td>
-            <img
-              src="images/t1-zoomed-out_p2.png"
-              align="middle"
-              width="300vw"
-            />
+			<figcaption>Sample caption.</figcaption>
           </td>
         </tr>
       </table>
     </div>
     <p>
-      Above we can see the wireframe of the cloth in
-      <i>scene/pinned2.json</i> from a final zoomed-in viewing angle, tilted but
-      paused halfway during the simulation being played viewing angle, and a
-      flat zoomed-out view from the beginning.
+      That's me above lmao
     </p>
 
     <blockquote>
       <b>
-        Show us what the wireframe looks like (1) without any shearing
-        constraints, (2) with only shearing constraints, and (3) with all
-        constraints.
+        Moar blockquote.
       </b>
     </blockquote>
-
-    <div align="middle">
-      <table style="width: 100%">
-        <tr align="center">
-          <td>
-            <img src="images/t1-no_shear.png" align="middle" width="300vw" />
-            <figcaption>No shearing constraints</figcaption>
-          </td>
-          <td>
-            <img src="images/t1-only_shear.png" align="middle" width="300vw" />
-            <figcaption>Only shearing constraints</figcaption>
-          </td>
-          <td>
-            <img src="images/t1-all.png" align="middle" width="300vw" />
-            <figcaption>All constraints</figcaption>
-          </td>
-        </tr>
-      </table>
-    </div>
   </body>
 </html>
