@@ -69,7 +69,7 @@
       }
     </style>
 
-    <title>CS 184 Mesh Editor</title>
+    <title>CS 184 Rasterization</title>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <!-- Not using below due to lacking bold fontfaces -->
     <!-- <link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro|Source+Sans+Pro:400,700" rel="stylesheet"> -->
@@ -99,53 +99,202 @@
 
     <div>
       <h2 align="left">Overview</h2>
-      <p>
-        Hi Billington city! You can do <i>italics</i>, <b>bold</b>,
-        <u>underline</u>, and <code>code</code>. You can also do in-line latex (\(x = 5\)) and display-style latex:
-		\[y=69.\]
-        <br />
-        <br />
-        I just breaklined twice.
-        <br />
-        <br />
-        Here's a nice link:
-        <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">not suspicious</a
-        >.
-      </p>
+      
     </div>
 
     <hr />
     <br />
     <h2 align="middle">Task 1: Drawing Single-Color Triangles</h2>
 
-    <h3>Overview</h3>
+    <h3>Triangle Rasterization Process</h3>
+    <p>The triangle rasterization process is handled through the use of two functions: <i> rasterize_triangle </i> and <i> insideCheck. </i></p>
+    <dl>
+      <dt>rasterize_triangle</dt>
+          <ol>
+            <li>rasterize_triangle first finds the bounding box of the triangle based on the three inputted points.
+              It does this by finding the smallest x,y values and largest x,y values, making sure to use <code> floor </code> 
+              for the lower bound and <code> ceil </code> for the upperbound. This step is important to ensure that even if a
+               vertex is only partially covered by a pixel, it is still considered when rendering by the bounding box.
+            </li>
+            <br />
+            <li>rasterize_triangle then uses a nested for loop to interate over the entire bounding box, where it
+               makes calls to inside_check with the pixel's position +0.5 in either direction in order to verify whether each pixel in the bounding box is within the
+                triangle. This offset is to measure from the middle of the pixel rather than corner. If the pixel is within the triangle, then it is added to the sample buffer. </li>
 
-    <p>Another overview ig.</p>
+            <br />
+            <li>If the pixel is inside, the fill_pixel function is called and the i,j position on the board is filled with that color. 
 
-    <blockquote>
-      <b> Here's a blockquote (you can customize this above). </b>
-    </blockquote>
+              <br>
+              
+              
+            </li>
+          </ol>
+      <dt>inside_check</dt>
+      <dd> The code for inside_check is as such: <br>
+        <blockquote> <p>bool insideCheck(double x0, double y0, double x1, double y1, double x2,
+        double y2, double x, double y) { <br>
+          &nbsp;&nbsp;double line1 = -(x - x0) * (y1 - y0) + (y - y0) * (x1 - x0); <br>
+          &nbsp;&nbsp;double line2 = -(x - x1) * (y2 - y1) + (y - y1) * (x2 - x1); <br>
+          &nbsp;&nbsp;double line3 = -(x - x2) * (y0 - y2) + (y - y2) * (x0 - x2); <br>
+          <br>
+          return (line1 >= 0 && line2 >= 0 && line3 >= 0) ||
+          (line1 <= 0 && line2 <= 0 && line3 <= 0); <br>
+          }</p></blockquote></dd>
+      <ol>
+        <li> inside_check first computes the line equations presented in lecture from the lines formed by v0 -> v1, v1 -> v2, v2 -> v0.
+        </li>
+        <br />
+        <li>Then, a final check must be done to ensure that the point is on the correct side of each halfspace, meaning it is inside the triangle. </li>
+      </ol>
+    </dl>
+    
 
+
+    <h3>Algorithmic Efficiency</h3>
+    <p>Since the described process only iterates through every pixel in the bounding box once, it exactly matches the efficency of an alg that only samples each pixel one time. It has efficiency O(WH) where W is width and H is height.</p>
+
+    <h3>Example of Basic Rasterization with Aliasing</h3>
     <div align="middle">
       <table style="width: 100%">
         <tr align="center">
           <td>
-            <img src="images/jonny_banana.jpeg" align="middle" width="300vw" />
-            <figcaption>Sample caption.</figcaption>
+            <img src="images/test4render.png" align="middle" width="300vw" />
+            <figcaption>Test 4 with Default Params Demonstrating Aliasing.</figcaption>
           </td>
         </tr>
       </table>
     </div>
-    <p>That's me above lmao</p>
-
-    <blockquote>
-      <b> Moar blockquote. </b>
-    </blockquote>
-  </body>
+    <p>Using the basic rasterization process described in class without any supersampling, aliasing in the form of gaps in the triangle rendering can be seen. Here, the gap is located on the left corner of the red triangle.</p>
 
   <h2 align="middle">Task 2: Antialiasing by Supersampling</h2>
+  <p>The triangle supersampling process is handled through the use of two functions: a modification to <i> rasterize_triangle </i> and <i> resolve_to_framebuffer. </i></p>
+
+  <h3>Triangle Supersampling Process</h3>
+  <dl>
+    <dt>rasterize_triangle</dt>
+        <ol>
+          <li>Inside the existing nested for loop that traverses each pixel in the original screen, the following codesnippit was added to perform supersamples of each pixel.
+            <blockquote>
+              <p>for (int k = 0; k < sqrt(sample_rate); k++) { <br>
+                &nbsp;&nbsp;for (int l = 0; l < sqrt(sample_rate); l++) { <br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;double x_point;<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;double y_point;<br>
+        
+                  &nbsp;&nbsp;&nbsp;&nbsp;// find the proper sampling distance<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;if (sample_rate > 1) {<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x_point = i + (1 + l * 2) * (1 / (sqrt(sample_rate) * 2));<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y_point = j + (1 + k * 2) * (1 / (sqrt(sample_rate) * 2));<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;} else {<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// if sample rate = 1<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x_point = i + 0.5;<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y_point = j + 0.5;<br>
+                    &nbsp;&nbsp;} <br>
+        
+                  &nbsp;&nbsp;if (insideCheck(x0, y0, x1, y1, x2, y2, x_point, y_point)) {<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;// code for offsetting the buffer pixel input<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;this->sample_buffer[width * j * sample_rate + i * sample_rate +
+                                        k * sqrt(sample_rate) + l] = color;<br>
+                                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                  &nbsp;&nbsp;}<br>
+              }</p>
+            </blockquote>
+            Another nested for loop was used to iterate sqrt(sample_rate) times each, which was chosen since a rate of 16, for example, cooresponds to a 4x4 square of samples or sqrt(sample_rate) * sqrt(sample_rate) grid. 
+            Then, to calcuate where inside the pixel each sample should be taken, the x_point and y_point logic were defined as such. The formula was calculated such that each sample is at 
+            the center of the subdivided pixel grid (aka how supersampling was presented in lecture). During implementation, x_point and y_point actually had to be changed from floats to doubles to account for rounding errors not rendering smaller triangles.
+            <br>
+            <br>
+            When inserting pixel samples into the sample_buffer, the positioning of each pixel had to be offset to insert a 
+            2d position into 1d array. The following logic, then, was used to group all supersamples of each pixel together, 
+            which is diagrammed below. This leads to the required offsets on i,j,k,l shown in the code above to properly index samples.
+            <div align="middle">
+              <table style="width: 100%">
+                <tr align="center">
+                  <td>
+                    <img src="images/screen_buffer_diag.png" align="middle" width="300vw" />
+                    <figcaption>Underlying logic of screen to buffer with supersampling rate 4.</figcaption>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </li>
+          <br />
+          <li>Due to the changes performed in rasterize_triangle, resolve_to_framebuffer also had to be modified in order to properly take the upsampled pixels and the downsample them again with cooresponding opacity values. </li>
+
+          <br />
+        </ol>
+    <dt>resolve_to_framebuffer</dt>
+    <dd> Resolve to framebuffer needs to be modified in order to handle the larger frame_buffer data structure that contains supersampled results. <br>
+    <ol>
+      <li> Firstly, the loop logic to collect samples is copied, but the inner l,k loops are used to collect all samples for a pixel to be averaged out.
+      </li>
+      <br />
+      <li> Here, the <code>derived_color</code> variable is initialized to have RGB channels all 0, which are then proprotionally added back to as all samples are collected. (Aka, derived color is an average of all sample colors)</li>
+      <blockquote>
+      Color derivedCol = Color(); <br>
+
+      for (int off1 = 0; off1 < sqrt(sample_rate); off1++) { <br>
+        &nbsp;&nbsp;for (int off2 = 0; off2 < sqrt(sample_rate); off2++) { <br>
+          &nbsp;&nbsp;&nbsp;&nbsp;Color c = <br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this->sample_buffer[width * y * sample_rate + x * sample_rate +
+                                  off1 * sqrt(sample_rate) + off2]; <br>
+          <br>
+          &nbsp;&nbsp;&nbsp;&nbsp;derivedCol += 1.0/sample_rate * c; <br>
+          &nbsp;&nbsp;} <br>
+      } <br>
+      </blockquote>
+      <li>Finally, the derived color is written to the <code>rgb_framebuffer_target</code> using the already implemented method.</li>
+    </ol>
+    <dt>clear_buffers</dt>
+    <dd> the clear_buffers commands was added into the <i>set_sample_rate</i> and <i>set_framebuffer_target</i> functions in order to make sure the framebuffer was empty everytime it needed to be overwritten with a new render (when more supersamples are taken or window is resized). </dd>
+  </dl>
+
+  <h3>Supersampling Results</h3>
+  <div align="left">
+    <table style="width: 100%">
+      <tr align="center">
+        <td>
+          <img src="images/1and4super.png" align="middle" width="600vw" />
+          <figcaption>Test 4 with default settings and supersampling rate 1 (left) and 4 (right).</figcaption>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <div align="right">
+    <table style="width: 100%">
+      <tr align="center">
+        <td>
+          <img src="images/9and16super.png" align="middle" width="600vw" />
+          <figcaption>Test 4 with default settings and supersampling rate 9 (left) and 16 (right).</figcaption>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <p> These results are observed because increasing the supersampling rate means the pixel color value better 
+    represents the proportion of the pixel covered by the triangle. In general, supersampling allows the 
+    render to capture and display more information about the picture than if it was rendered at a lower resolution, even when it is downscaled.
+    At rate 1, the Rasterizer only considers if the middle of the pixel is within the triangle.
+    This makes it more likely to discount certain pixels as not being in the triangle at all. Using supersampling, though, more subsamples within the 
+    pixel would be categorized as inside the triangle, thus filling the gap seen in the top left image. In general, 
+    supersampling helps to reduce aliasing, and increasing the rate would mean each pixel becomes a better characterization of how much of the pixel is contained in the triangle, which is reflected in the opacity of the pixel.
+    </p>
+
+
 
   <h2 align="middle">Task 3: Transforms</h2>
+
+  <div align="middle">
+    <table style="width: 100%">
+      <tr align="center">
+        <td>
+          <img src="images/gojo.png" align="middle" width="600vw" />
+          <figcaption>We have gojo at home (gojo at home).</figcaption>
+        </td>
+      </tr>
+    </table>
+  </div>
+
 
   <h2 align="middle">Task 4: Barycentric coordinates</h2>
 
@@ -179,16 +328,18 @@
   <p>
 	We also display the color wheel in <code>svg/basic/test7.svg</code> below:
   </p>
+  
   <div align="middle">
-	<table style="width: 100%">
-	  <tr align="center">
-		<td>
-		  <img src="images/bc_colorwheel.png" align="middle" width="300vw" />
-		  <figcaption>Color wheel in <code>svg/basic/test7.svg</code>.</figcaption>
-		</td>
-	  </tr>
-	</table>
+    <table style="width: 100%">
+      <tr align="center">
+        <td>
+          <img src="images/test7render.png" align="middle" width="300vw" />
+          <figcaption>Test 7 with Default Params Demonstrating Barycentric Gradient.</figcaption>
+        </td>
+      </tr>
+    </table>
   </div>
+  <p></p>
 
   <h2 align="middle">Task 5: "Pixel sampling" for texture mapping</h2>
 
