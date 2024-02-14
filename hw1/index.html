@@ -278,7 +278,7 @@ for (int off1 = 0; off1 < sqrt(sample_rate); off1++) {
   <p> These results are observed because increasing the supersampling rate means the pixel color value better 
     represents the proportion of the pixel covered by the triangle. In general, supersampling allows the 
     render to capture and display more information about the picture than if it was rendered at a lower resolution, even when it is downscaled.
-    At rate 1, the Rasterizer only considers if the middle of the pixel is within the triangle.
+    At rate 1, the rasterizer only considers if the middle of the pixel is within the triangle.
     This makes it more likely to discount certain pixels as not being in the triangle at all. Using supersampling, though, more subsamples within the 
     pixel would be categorized as inside the triangle, thus filling the gap seen in the top left image. In general, 
     supersampling helps to reduce aliasing, and increasing the rate would mean each pixel becomes a better characterization of how much of the pixel is contained in the triangle, which is reflected in the opacity of the pixel.
@@ -384,11 +384,13 @@ for (int off1 = 0; off1 < sqrt(sample_rate); off1++) {
 		<li><b>Compute Mipmap Level:</b> scale the \(uv\) barycentric difference vectors up by the dimensions of the texture image, and then take the <code>log2</code> of the max of their norms. </li>
 		<li><b>Sample:</b> for <code>L_ZERO</code>, we hardcode the level to be 0; for <code>L_NEAREST</code>, we round the level to the nearest integer; and for <code>L_LINEAR</code>, we sample based on the floor and ceiling of the level, and then linearly interpolate the resulting colors.</li>
 	</ol>
-	Now, we are able to adjust our sampling technique among <i>pixel sampling</i>, <i>level sampling</i>, or the number of samples per pixel. We describe some performance tradeoffs among these tuning methods:
+	Now, we are able to adjust our sampling technique among <i>pixel sampling</i>, <i>level sampling</i>, or <i>the number of samples per pixel</i>. We describe some performance tradeoffs among these tuning methods:
 </p>
-<p>
-[TODO: describe tradeoffs between the 3 adjustments methods.]
-</p>
+<ul>
+<li><b>Pixel Sampling:</b> good for general texture/perspective mapping, but fails on moire patterns and is weaker compared to super-sampling rasterization.</li>
+<li><b>Level Sampling:</b> enables for dynamic balance between memory saving and time efficiency (i.e. balance between pixel sampling and super-sampling), also reduces moire patterns.</li>
+<li><b>Number of Samples per Pixel:</b> tuning this parameter can fix moire patterns and general aliasing (better than pixel sampling or level sampling), but can be computationally heavy when perform high super-sampling.</li>
+</ul>
 <p>
 We now apply various sampling methods on an image of Toji, an anime character. We provide the 6 versions of Toji below:
   </p>
