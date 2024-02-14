@@ -94,12 +94,14 @@
     <h1 align="left">CS 184: Computer Graphics and Imaging, Spring 2024</h1>
     <h1 align="left">Homework 1: Rasterizer</h1>
     <h2 align="left">Muc S'ojog: Bill Shao, Jonathan Pei</h2>
-
+	<h3 align="left">Webpage Link: <a href="https://cal-cs184-student.github.io/hw-webpages-sp24-jonnypei/hw1/index.html">https://cal-cs184-student.github.io/hw-webpages-sp24-jonnypei/hw1/index.html</a></h2>
     <hr />
 
     <div>
       <h2 align="left">Overview</h2>
-      
+      <p>
+		Overview here.
+	  </p>
     </div>
 
     <hr />
@@ -374,6 +376,58 @@
 
   <p>
 	Level sampling is using <a href="https://en.wikipedia.org/wiki/Mipmap">mipmaps</a> to sample the texture of an image at various "levels" or resolutions. 
+	To implement this, we follow the procedure below:
+	<ol>
+		<li><b>Compute Mipmap Level:</b> scale the \(uv\) barycentric difference vectors up by the dimensions of the texture image, and then take the <code>log2</code> of the max of their norms. </li>
+		<li><b>Sample:</b> for <code>L_ZERO</code>, we hardcode the level to be 0; for <code>L_NEAREST</code>, we round the level to the nearest integer; and for <code>L_LINEAR</code>, we sample based on the floor and ceiling of the level, and then linearly interpolate the resulting colors.</li>
+	</ol>
+	Now, we are able to adjust our sampling technique among <i>pixel sampling</i>, <i>level sampling</i>, or the number of samples per pixel. We describe some performance tradeoffs among these tuning methods:
+
+<br />
+
+[TODO: describe tradeoffs between the 3 adjustments methods.]
+
+<br />
+
+We now apply various sampling methods on an image of Toji, an anime character. We provide the 6 versions of Toji below:
   </p>
+
+  <div align="middle">
+	<table style="width: 100%">
+	  <tr align="center">
+		<td>
+		  <img src="images/toji_LZERO_PNEAREST.png" align="middle" width="300vw" />
+		  <figcaption><code>L_ZERO</code> and <code>P_NEAREST</code></figcaption>
+		</td>
+		<td>
+		  <img src="images/toji_LZERO_PLINEAR.png" align="middle" width="300vw" />
+		  <figcaption><code>L_ZERO</code> and <code>P_LINEAR</code></figcaption>
+		</td>
+	  </tr>
+	  <tr align="center">
+		<td>
+		  <img src="images/toji_LNEAREST_PNEAREST.png" align="middle" width="300vw" />
+		  <figcaption><code>L_NEAREST</code> and <code>P_NEAREST</code></figcaption>
+		</td>
+		<td>
+		  <img src="images/toji_LNEAREST_PLINEAR.png" align="middle" width="300vw" />
+		  <figcaption><code>L_NEAREST</code> and <code>P_LINEAR</code></figcaption>
+		</td>
+	  </tr>
+	  <tr align="center">
+		<td>
+		  <img src="images/toji_LLINEAR_PNEAREST.png" align="middle" width="300vw" />
+		  <figcaption><code>L_LINEAR</code> and <code>P_NEAREST</code></figcaption>
+		</td>
+		<td>
+		  <img src="images/toji_LLINEAR_PLINEAR.png" align="middle" width="300vw" />
+		  <figcaption><code>L_LINEAR</code> and <code>P_LINEAR</code></figcaption>
+		</td>
+	  </tr>
+	</table>
+	</figcaption>
+  </div>
+
+
 
   </html>
