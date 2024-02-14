@@ -119,6 +119,7 @@
     <h2 align="middle">Task 1: Drawing Single-Color Triangles</h2>
 
     <h3>Overview</h3>
+
     <p>Another overview ig.</p>
 
     <blockquote>
@@ -148,7 +149,57 @@
 
   <h2 align="middle">Task 4: Barycentric coordinates</h2>
 
+  <p>
+	Barycentric coordinates are a way to represent a point in space in terms of a linear combination of a set of (3) points. 
+	In the context of computer graphics, it's essentially taking the colors of a set of coordinates, and blending them together to form a hybrid color at a given coordinate; it's basically color interpolation! 
+	In this class, we the barycentric coordinates of a 2D vector \((x, y)\) to be \((\alpha, \beta, \gamma)\), characterized in the figure below from lecture:
+  </p>
+  <div align="middle">
+	<table style="width: 100%">
+	  <tr align="center">
+		<td>
+		  <img src="images/bc_diagram.png" align="middle" width="300vw" />
+		  <!-- <figcaption>RGB Triangle.</figcaption> -->
+		</td>
+	  </tr>
+	</table>
+  </div>	
+  <p>The barycentric coordinates add up to 1 to ensure that the color of the coordinate is representative of something "inside" of the colors of the 3 reference points. Another way to think about this is that we shouldn't be introducing more "color" than what we started with. We provide a visualization of the color blending in the RGB triangle below, in which we observe a smooth, natural blending of colors inside the triangle.
+  </p>
+  <div align="middle">
+	<table style="width: 100%">
+	  <tr align="center">
+		<td>
+		  <img src="images/bc_triangle.png" align="middle" width="300vw" />
+		  <!-- <figcaption>RGB Triangle.</figcaption> -->
+		</td>
+	  </tr>
+	</table>
+  </div>
+  <p>
+	We also display the color wheel in <code>svg/basic/test7.svg</code> below:
+  </p>
+  <div align="middle">
+	<table style="width: 100%">
+	  <tr align="center">
+		<td>
+		  <img src="images/bc_colorwheel.png" align="middle" width="300vw" />
+		  <figcaption>Color wheel in <code>svg/basic/test7.svg</code>.</figcaption>
+		</td>
+	  </tr>
+	</table>
+  </div>
+
   <h2 align="middle">Task 5: "Pixel sampling" for texture mapping</h2>
 
+  <p>
+
+  </p>
+
   <h2 align="middle">Task 6: "Level sampling" with mipmaps for texture mapping</h2>
-</html>
+
+  <p>
+
+  </p>
+
+  </html>
