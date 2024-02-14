@@ -334,23 +334,46 @@
       <tr align="center">
         <td>
           <img src="images/test7render.png" align="middle" width="300vw" />
-          <figcaption>Test 7 with Default Params Demonstrating Barycentric Gradient.</figcaption>
+          <!-- <figcaption>.</figcaption> -->
         </td>
       </tr>
     </table>
   </div>
-  <p></p>
 
   <h2 align="middle">Task 5: "Pixel sampling" for texture mapping</h2>
 
   <p>
-
+	Pixel sampling is the process of determining which texel to sample from based on the barycentric coordinates of the pixel in the image.
+	To implement this, we multiply the barycentric coordinates by the dimensions of the texture image, and then interpolate the result based on the sampling method:
+	<ol>
+		<li><b>Nearest Sampling:</b> rounds result to the nearest integer.</li>
+		<li><b>Bilinear Sampling:</b> perform three bilinear interpolations (<code>lerp</code>) in the \(u, v\) directions, within texture values corresponding to the bounds of a unit square containing the image pixel. </li>
+	</ol> 
+	In general, bilinear sampling yields better texture mappings compared to nearest sampling. We provide a clear example of bilinear sampling outperforming nearest sampling in the figure below:
+</p>
+	<div align="middle">
+		<table style="width: 100%">
+		  <tr align="center">
+			<td>
+			  <img src="images/pixel_sampling_nearest.png" align="middle" width="300vw" />
+			</td>
+			<td>
+			  <img src="images/pixel_sampling_bilinear.png" align="middle" width="300vw" />
+			</td>
+		  </tr>
+		</table>
+		<figcaption>Pixel Inspection on <code>svg/texmap/test1.svg</code>.
+		</figcaption>
+	  </div>
+	  <p>
+	  We observe that bilinear sampling (right) yields a much smoother and less jaggy texture mapping compared to nearest sampling (left).
+	The performance difference is likely most pronounced in line or edge texturing.
   </p>
 
   <h2 align="middle">Task 6: "Level sampling" with mipmaps for texture mapping</h2>
 
   <p>
-
+	Level sampling is using <a href="https://en.wikipedia.org/wiki/Mipmap">mipmaps</a> to sample the texture of an image at various "levels" or resolutions. 
   </p>
 
   </html>
