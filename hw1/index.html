@@ -225,10 +225,12 @@ for (int k = 0; k < sqrt(sample_rate); k++) {
 
           <br />
         </ol>
-    <dt>resolve_to_framebuffer</dt>
-    <dd> Resolve to framebuffer needs to be modified in order to handle the larger frame_buffer data structure that contains supersampled results. <br>
+    <code>resolve_to_framebuffer</code>
+    <br/>
+    <br/>
+    <dd> Resolve to framebuffer needs to be modified in order to handle the larger <code>frame_buffer</code> data structure that contains supersampled results. <br>
     <ol>
-      <li> Firstly, the loop logic to collect samples is copied, but the inner l,k loops are used to collect all samples for a pixel to be averaged out.
+      <li> Firstly, the loop logic to collect samples is copied, but the inner \(l,k\) loops are used to collect all samples for a pixel to be averaged out.
       </li>
       <br />
       <li> Here, the <code>derived_color</code> variable is initialized to have RGB channels all 0, which are then proprotionally added back to as all samples are collected. (Aka, derived color is an average of all sample colors)</li>
