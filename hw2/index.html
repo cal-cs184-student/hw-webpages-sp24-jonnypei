@@ -99,7 +99,7 @@
 
       <h2 align="left">Overview</h2>
       <p>
-TODO
+        In this assignment, we built Bezier curves and surfaces using the de Casteljau subdivision algorithm, developed triangle meshes modification methods, and implemented multiple loop subdivision methods. Our main takeaway was how intricate geometric modeling and mesh manipulation are—we spent quite some time debugging the implementations for edge flip, edge split, and mesh upsampling. Nonetheless, we had tons of fun playing around with the tools we created! 
 	  </p>
 
     <hr />
@@ -107,16 +107,196 @@ TODO
 	<hr />
 
     <h2 align="left">Part 1: Bezier curves with 1D de Casteljau subdivision</h2>
+
+    <p>
+      TODO: Bill
+    </p>
+
 	<h2 align="left">Part 2: Bezier surfaces with separable 1D de Casteljau</h2>
+
+  <p>
+    TODO: Bill
+  </p>
 	
 	<hr />
 	<h2 align="middle">Section II: Triangle Meshes and Half-Edge Data Structure</h1>
 	<hr />
 
 	<h2 align="left">Part 3: Area-weighted vertex normals</h2>
+
+  <p>
+    TODO: Bill
+  </p>
+
 	<h2 align="left">Part 4: Edge flip</h2>
+
+  <p>
+    Our implementation of an edge flip consists of the following steps:
+
+    <ol>
+      <li><b>Boundary Check:</b></li>
+      <li><b>Mesh Labeling:</b></li>
+      <li><b>Re-assign half-edges:</b></li>
+      <li><b>Re-assign vertices:</b></li>
+      <li><b>Re-assign faces:</b></li>
+    </ol>
+
+  We now display some screenshots of the teapot before and after some edge flips:
+    </p>
+
+    <div align="middle">
+      <table style="width: 100%">
+        <tr align="center">
+          <td>
+            <img src="images/[TODO].png" align="middle" width="300vw" />
+            <figcaption>Teapot before</figcaption>
+          </td>
+          <td>
+            <img src="images/[TODO].png" align="middle" width="300vw" />
+            <figcaption>Teapot after 1 edge flip</figcaption>
+          </td>
+          <td>
+            <img src="images/[TODO].png" align="middle" width="300vw" />
+            <figcaption>Teapot after multiple edge flips</figcaption>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <p>
+      Our debugging journey wasn't too eventful; our initial implementation simply didn't account for all the pointers we had to change. Having an organized diagram of our labeled half-edges, edges, vertices, and faces really helped us pinpoint the pointer bugs.
+    </p>
+
+
 	<h2 align="left">Part 5: Edge split</h2>
+
+  <p>
+    Our implementation of an edge split consists of the following steps:
+    <ol>
+      <li><b>Boundary Check:</b></li>
+      <li><b>Mesh Labeling:</b></li>
+      <li><b>Mesh Creation:</b></li>
+      <li><b>Re-assign half-edges:</b></li>
+      <li><b>Re-assign vertices:</b></li>
+      <li><b>Re-assign faces:</b></li>
+    </ol>
+
+    We now display some screenshots of the teapot before and after some edge operations:
+  </p>
+
+  <div align="middle">
+    <table style="width: 100%">
+      <tr align="center">
+        <td>
+          <img src="images/[TODO].png" align="middle" width="300vw" />
+          <figcaption>Teapot before</figcaption>
+        </td>
+        <td>
+          <img src="images/[TODO].png" align="middle" width="300vw" />
+          <figcaption>Teapot after 1 edge split</figcaption>
+        </td>
+        <td>
+          <img src="images/[TODO].png" align="middle" width="300vw" />
+          <figcaption>Teapot after multiple edge splits</figcaption>
+        </td>
+        <td>
+          <img src="images/[TODO].png" align="middle" width="300vw" />
+          <figcaption>Teapot after multiple edge flips and splits</figcaption>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <p>
+    Our debugging journey mainly consisted of the following events:
+    <ol>
+      <li>Missing edge reassignments, which caused a bunch of seg-faults.</li>
+      <li>Some half-edges being assigned to the wrong vertices, which produced black spots and missing faces.</li>
+      <li>Forgetting to reassign pointers for the original face (not the 3 new faces).</li>
+    </ol>
+  </p>
+
+  <h3 align="left">[Extra Credit] Support for Splitting on Boundary Edges</h3>
+
 	<h2 align="left">Part 6: Loop subdivision for mesh upsampling</h2>
+
+  <h3 align="left">Implementation Details</h3>
+
+  <p>
+    Our implementation of loop subdivision consists of the following steps:
+
+    <ol>
+      <li><b>Compute new positions of old vertices in the mesh:</b></li>
+      <pre>
+for (VertexIter v = mesh.verticesBegin(); v != mesh.verticesEnd(); v++) {
+  v->isNew = false;
+  double u = 3.0 / (8 * v->degree());
+  if (v->degree() == 3) {
+    u = 3.0 / 16;
+  }
+  v->newPosition = (1 - v->degree() * u) * v->position + u * getOriginalNeighborPosSum(v);
+}
+      </pre>
+      <li><b>Compute new positions of new vertices to be created via splits:</b></li>
+      <pre>
+for (EdgeIter e = mesh.edgesBegin(); e != mesh.edgesEnd(); e++) {
+  e->isNew = false;
+  e->visited = false;
+
+  Vector3D A = e->halfedge()->vertex()->position;
+  Vector3D B = e->halfedge()->twin()->vertex()->position;
+  Vector3D C = e->halfedge()->next()->next()->vertex()->position;
+  Vector3D D = e->halfedge()->twin()->next()->next()->vertex()->position;
+
+  e->newPosition = 3.0 / 8 * (A + B) + 1.0 / 8 * (C + D);
+}
+      </pre>
+      <li><b>Split all the old edges in the mesh:</b></li>
+      <pre>
+EdgeIter e = mesh.edgesBegin();
+while (e != mesh.edgesEnd()) {
+  EdgeIter nextEdge = e;
+  nextEdge++;
+
+  if (!e->visited) {
+    VertexIter v = mesh.splitEdge(e);
+    v->newPosition = e->newPosition;
+  }
+
+  e = nextEdge;
+}
+      </pre>
+      <li><b>Flip all the new edges (generated via splits) that connect an old vertex to a new vertex:</b></li>
+      <pre>
+e = mesh.edgesBegin();
+while (e != mesh.edgesEnd()) {
+  EdgeIter nextEdge = e;
+  nextEdge++;
+
+  if (e->isNew && e->halfedge()->vertex()->isNew !=
+                      e->halfedge()->twin()->vertex()->isNew) {
+    mesh.flipEdge(e);
+  }
+
+  e = nextEdge;
+}
+      </pre>
+      <li><b>Update the positions of all vertices.</b></li>
+      <pre>
+for (VertexIter v = mesh.verticesBegin(); v != mesh.verticesEnd(); v++) {
+  v->position = v->newPosition;
+}
+      </pre>
+    </ol>
+  </p>
+
+  <h3>Mesh Behavior After Loop Subdivision</h3>
+
+  <h3>Symmetric Subdivision on Cube</h3>
+
+  <h3>[Extra Credit] Support for Meshes with Boundaries </h3>
+ 
+  <h3>[Extra Credit] \(\sqrt{3}\)-Subdivision</h3>
 	
 	<hr />
 	<h2 align="middle">Section III: Potential Extra Credit - Art Competition: Model something Creative!</h1>
