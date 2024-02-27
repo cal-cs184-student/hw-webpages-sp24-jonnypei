@@ -115,7 +115,7 @@
       points along the line. In this sense, de Casteljau's algorithm can be thought of as recursive, where the
        input is the current bounding points and the output is the next linearly-interpolated bounding points 
        until only 1 point remains. This recursive step was essentially the code in <code> evaluateStep</code>, 
-       which used the helper function <code> lerp</code> on all consecutive pairs of verticies to go from n points to n-1 points.
+       which used the helper function <code> lerp</code> on all consecutive pairs of vertices to go from n points to n-1 points.
       
        <pre>
 Vector2D lerp(Vector2D p1, Vector2D p2, double t) {
@@ -220,35 +220,35 @@ We provide a screenshot of <code>teapot.bez</code> evaluated by implementation b
 
   <p>
     <b>Implementation of area-weighted vertex normals: </b>  The code to implement the area-weighted vertex normal was split into 2 major components.
-    The first was collecting all verticies necessary to generate faces to average across, and the second was the perform the actual averaging process.
-    To collect the verticies, the modified example <code>printNeighbourPositions</code> function was used as shown below. 
+    The first was collecting all vertices necessary to generate faces to average across, and the second was the perform the actual averaging process.
+    To collect the vertices, the modified example <code>printNeighbourPositions</code> function was used as shown below. 
   </p>
   <pre>
-    HalfedgeCIter h = halfedge();
-    Vector3D originPoint = h->vertex()->position;
-    auto verticies = vector<Vector3D>();
-    do {
-      HalfedgeCIter h_twin = h->twin(); // get the opposite half-edge
-      VertexCIter v =
-          h_twin->vertex(); // vertex is the 'source' of the half-edge, so
-                            // h->vertex() is v, whereas h_twin->vertex()
-                            // is the neighboring vertex
-      verticies.push_back(v->position);
-      h = h_twin->next(); // move to the next outgoing half-edge of the vertex
-    } while (h != halfedge());
+HalfedgeCIter h = halfedge();
+Vector3D originPoint = h->vertex()->position;
+auto vertices = vector<Vector3D>();
+do {
+  HalfedgeCIter h_twin = h->twin(); // get the opposite half-edge
+  VertexCIter v =
+      h_twin->vertex(); // vertex is the 'source' of the half-edge, so
+                        // h->vertex() is v, whereas h_twin->vertex()
+                        // is the neighboring vertex
+  vertices.push_back(v->position);
+  h = h_twin->next(); // move to the next outgoing half-edge of the vertex
+} while (h != halfedge());
   </pre>
   <p>
-    This code snippet iterates through all neighboring verticies and stores them into the <code>verticies</code> vector. 
-    Then, creating each face can be conceptually seen as taking <code>verticies[i]</code>, <code>verticies[i+1]</code>, and the original vertex.
+    This code snippet iterates through all neighboring vertices and stores them into the <code>vertices</code> vector. 
+    Then, creating each face can be conceptually seen as taking <code>vertices[i]</code>, <code>vertices[i+1]</code>, and the original vertex.
     This is because each face must border the original vertex, and the other two edges must be adjacent to each other. 
     Finally, the cross-product was used to find the normal vector, which was subtracted from a total vector and normalized at the end.
     It was subtracted since we were having issues with a very dark shading, meaning the vector was pointing inwards on the mesh rather than outwards!
     Since the length of each normal vector depends on the length of the face defining vectors used, the resulting vector is natually area-weighted. 
     
     <pre>
-for (int i = 0; i < verticies.size() - 1; i++) {
-  auto vec1 = verticies[i] - originPoint;
-  auto vec2 = verticies[i + 1] - originPoint;
+for (int i = 0; i < vertices.size() - 1; i++) {
+  auto vec1 = vertices[i] - originPoint;
+  auto vec2 = vertices[i + 1] - originPoint;
   auto normvec = -cross(vec1, vec2);
   normalvec += normvec;
 }
@@ -545,6 +545,66 @@ for (VertexIter v = mesh.verticesBegin(); v != mesh.verticesEnd(); v++) {
   </p>
 
   <h3>Mesh Behavior After Loop Subdivision</h3>
+
+  <p>  Below, we provide screenshots of the first 4 upsample operations on <code>cube.dae</code> and <code>torus/input.dae</code>. 
+  </p>
+  <div align="middle">
+    <table style="width: 100%">
+      <tr align="center">
+        <td>
+          <img src="images/p6_cube_0.png" align="middle" width="300vw" />
+          <figcaption>Original Cube</figcaption>
+        </td>
+        <td>
+          <img src="images/p6_cube_1.png" align="middle" width="300vw" />
+          <figcaption>Cube after 1 subdivision</figcaption>
+        </td>
+        <td>
+          <img src="images/p6_cube_2.png" align="middle" width="300vw" />
+          <figcaption>Cube after 2 subdivisions</figcaption>
+        </td>
+        <td>
+          <img src="images/p6_cube_3.png" align="middle" width="300vw" />
+          <figcaption>Cube after 3 subdivisions</figcaption>
+        </td>
+        <td>
+          <img src="images/p6_cube_4.png" align="middle" width="300vw" />
+          <figcaption>Cube after 4 subdivisions</figcaption>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <div align="middle">
+    <table style="width: 100%">
+      <tr align="center">
+        <td>
+          <img src="images/p6_torus_0.png" align="middle" width="300vw" />
+          <figcaption>Original Torus</figcaption>
+        </td>
+        <td>
+          <img src="images/p6_torus_1.png" align="middle" width="300vw" />
+          <figcaption>Torus after 1 subdivision</figcaption>
+        </td>
+        <td>
+          <img src="images/p6_torus_2.png" align="middle" width="300vw" />
+          <figcaption>Torus after 2 subdivisions</figcaption>
+        </td>
+        <td>
+          <img src="images/p6_torus_3.png" align="middle" width="300vw" />
+          <figcaption>Torus after 3 subdivisions</figcaption>
+        </td>
+        <td>
+          <img src="images/p6_torus_4.png" align="middle" width="300vw" />
+          <figcaption>Torus after 4 subdivisions</figcaption>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <p>
+  We observe that after each loop subdivision, the cube mesh becomes increasingly more rounded as the sharp corners/edges are smoothed away.
+  </p>
 
   <h3>Symmetric Subdivision on Cube</h3>
 
