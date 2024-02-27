@@ -109,14 +109,116 @@
     <h2 align="left">Part 1: Bezier curves with 1D de Casteljau subdivision</h2>
 
     <p>
-      TODO: Bill
+      <code>de Casteljau's algorithm Description:</code>  This algorithm works by using the points defining the 
+      Bezier curve as guiding points, and calculates successive linear interpolations at these points until a 
+      single point is found, which can then be varied by changing the <code>t</code> parameter to fully capture 
+      points along the line. In this sense, de Casteljau's algorithm can be thought of as recursive, where the
+       input is the current bounding points and the output is the next linearly-interpolated bounding points 
+       until only 1 point remains. This recursive step was essentially the code in <code> evaluateStep </code>, 
+       which used the helper function <code> lerp</code> on all consecutive pairs of verticies to go from n points to n-1 points.
+       
+       <pre>
+        Vector2D lerp(Vector2D p1, Vector2D p2, double t) {
+          return (1 - t) * p1 + t * p2;
+        }
+      </pre>
+      <pre>
+        BezierCurve::evaluateStep(std::vector<Vector2D> const &points) {
+          auto interpolatedpoints = vector<Vector2D>();
+          for (int i = 0; i < points.size() - 1; i++) {
+            interpolatedpoints.push_back(lerp(points[i], points[i + 1], t));
+          }
+        
+          return interpolatedpoints;
+        }
+      </pre>
+    
+
     </p>
+
+    <div align=";middle">
+      <table style="width: 100%">
+        <tr align="center">
+          <td>
+            <img src="images/download.jpeg" align="middle" width="500vw" />
+            <figcaption>Bezier Curve of 6 points with successive evaluateStep function calls at ~<code>t = 0.5</code>. </figcaption>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div align="middle">
+      <table style="width: 100%">
+        <tr align="center">
+          <td>
+            <img src="images/lerp5wline.png" align="middle" width="300vw" />
+            <figcaption>Final Rendered Curve</figcaption>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <div align="middle">
+      <table style="width: 100%">
+        <tr align="center">
+          <td>
+            <img src="images/differentCurve.png" align="middle" width="300vw" />
+            <figcaption>Slightly different curve with lower <code>t.</code></figcaption>
+          </td>
+        </tr>
+      </table>
+    </div>
 
 	<h2 align="left">Part 2: Bezier surfaces with separable 1D de Casteljau</h2>
 
   <p>
-    TODO: Bill
+    <code>How de Casteljau algorithm extends to Bezier surfaces:</code> Bezier surfaces 
+    can be imagined as taking multiple 1D curves along the same axis, and then using those resulting 
+    points from the successive curves to perform one last Bezier curve evaluation. In terms of the inputs,
+     the 2D array controlPoints is treated as rows of 1D curves and evaluated row by row on the parameter 
+     <code>u</code>, which is equivalent to <code>t</code>. This generates 1 final list of points called <code>interpolationsatu</code>, 
+     which is evaluated on parameter <code>v</code> to get the final point on the patch. Interpretation wise,
+     varying u and v can then be thought of as traversing along different x,y positions of the patch. Implementation-wise, 
+     the only major addition was the function <code>evaluate1D</code>, which actually wrapped and recursively called <code>evaluateStep.</code>
   </p>
+  <pre>
+
+    Vector3D BezierPatch::evaluate(double u, double v) const {
+      auto interpolationsatu = vector<Vector3D>();
+      unsigned int n = controlPoints.size();
+      for (int i = 0; i < n; i++) {
+        interpolationsatu.push_back(evaluate1D(controlPoints[i], u));
+      }
+    
+      return evaluate1D(interpolationsatu, v);
+    }
+  </pre>
+  <pre>
+    Vector3D BezierPatch::evaluate1D(std::vector<Vector3D> const &points,
+      double t) const {
+      // TODO Part 2.
+      if (points.size() == 1) {
+      return points[0];
+      }
+      auto currInterp = evaluateStep(points, t);
+      while (currInterp.size() > 1) {
+      currInterp = evaluateStep(currInterp, t);
+      }
+
+      return currInterp[0];
+    }
+  </pre>
+
+
+  <div align="middle">
+    <table style="width: 100%">
+      <tr align="center">
+        <td>
+          <img src="images/teapot.png" align="middle" width="500vw" />
+          <figcaption>Render of teapot.dae </figcaption>
+        </td>
+      </tr>
+    </table>
+  </div>
 	
 	<hr />
 	<h2 align="middle">Section II: Triangle Meshes and Half-Edge Data Structure</h1>
@@ -125,8 +227,59 @@
 	<h2 align="left">Part 3: Area-weighted vertex normals</h2>
 
   <p>
-    TODO: Bill
+    <code>Implementation of area-weighted vertex normals: </code>  The code to implement the area-weighted vertex normal was split into 2 major components.
+    The first was collecting all verticies necessary to generate faces to average across, and the second was the perform the actual averaging process.
+    To collect the verticies, the modified example <code>printNeighbourPositions</code> function was used as shown below. 
   </p>
+  <pre>
+    HalfedgeCIter h = halfedge();
+    Vector3D originPoint = h->vertex()->position;
+    auto verticies = vector<Vector3D>();
+    do {
+      HalfedgeCIter h_twin = h->twin(); // get the opposite half-edge
+      VertexCIter v =
+          h_twin->vertex(); // vertex is the 'source' of the half-edge, so
+                            // h->vertex() is v, whereas h_twin->vertex()
+                            // is the neighboring vertex
+      verticies.push_back(v->position);
+      h = h_twin->next(); // move to the next outgoing half-edge of the vertex
+    } while (h != halfedge());
+  </pre>
+  <p>
+    This code snippet iterates through all neighboring verticies and stores them into the <code>verticies</code> vector. 
+    Then, creating each face can be conceptually seen as taking <code>verticies[i]</code>, <code>verticies[i+1]</code>, and the original vertex.
+    This is because each face must border the original vertex, and the other two edges must be adjacent to each other. 
+    Finally, the cross-product was used to find the normal vector, which was subtracted from a total vector and normalized at the end.
+    It was subtracted since we were having issues with a very dark shading, meaning the vector was pointing inwards on the mesh rather than outwards!
+    Since the length of each normal vector depends on the length of the face defining vectors used, the resulting vector is natually area-weighted. 
+    
+    <pre>
+      for (int i = 0; i < verticies.size() - 1; i++) {
+        auto vec1 = verticies[i] - originPoint;
+        auto vec2 = verticies[i + 1] - originPoint;
+        auto normvec = -cross(vec1, vec2);
+        normalvec += normvec;
+      }
+    
+      return normalvec.unit();
+    </pre>
+  </p>
+  
+
+  <div align="middle">
+    <table style="width: 100%">
+      <tr align="center">
+        <td>
+          <img src="images/teapot.png" align="middle" width="400vw" />
+          <figcaption>Render of teapot.dae with flat shading.</figcaption>
+        </td>
+        <td>
+          <img src="images/teapotphong.png" align="middle" width="400vw" />
+          <figcaption>Render of teapot.dae with phong shading.</figcaption>
+        </td>
+      </tr>
+    </table>
+  </div>
 
 	<h2 align="left">Part 4: Edge flip</h2>
 
