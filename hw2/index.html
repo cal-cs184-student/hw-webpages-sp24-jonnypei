@@ -109,7 +109,7 @@
     <h2 align="left">Part 1: Bezier curves with 1D de Casteljau subdivision</h2>
 
     <p>
-      <code>de Casteljau's algorithm Description:</code>  This algorithm works by using the points defining the 
+      <b>de Casteljau's algorithm Description:</b>  This algorithm works by using the points defining the 
       Bezier curve as guiding points, and calculates successive linear interpolations at these points until a 
       single point is found, which can then be varied by changing the <code>t</code> parameter to fully capture 
       points along the line. In this sense, de Casteljau's algorithm can be thought of as recursive, where the
@@ -171,7 +171,7 @@
 	<h2 align="left">Part 2: Bezier surfaces with separable 1D de Casteljau</h2>
 
   <p>
-    <code>How de Casteljau algorithm extends to Bezier surfaces:</code> Bezier surfaces 
+    <b>How de Casteljau algorithm extends to Bezier surfaces:</b> Bezier surfaces 
     can be imagined as taking multiple 1D curves along the same axis, and then using those resulting 
     points from the successive curves to perform one last Bezier curve evaluation. In terms of the inputs,
      the 2D array controlPoints is treated as rows of 1D curves and evaluated row by row on the parameter 
@@ -227,7 +227,7 @@
 	<h2 align="left">Part 3: Area-weighted vertex normals</h2>
 
   <p>
-    <code>Implementation of area-weighted vertex normals: </code>  The code to implement the area-weighted vertex normal was split into 2 major components.
+    <b>Implementation of area-weighted vertex normals: </b>  The code to implement the area-weighted vertex normal was split into 2 major components.
     The first was collecting all verticies necessary to generate faces to average across, and the second was the perform the actual averaging process.
     To collect the verticies, the modified example <code>printNeighbourPositions</code> function was used as shown below. 
   </p>
