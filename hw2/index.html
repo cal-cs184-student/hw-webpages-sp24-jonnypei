@@ -548,8 +548,53 @@ for (VertexIter v = mesh.verticesBegin(); v != mesh.verticesEnd(); v++) {
 
   <p>  Below, we provide screenshots of the first 4 upsample operations on <code>cube.dae</code> and <code>torus/input.dae</code>. 
   </p>
+
   <div align="middle">
     <table style="width: 100%">
+      <tr align="center">
+        <td>
+          <img src="images/p6_icosa_0.png" align="middle" width="300vw" />
+          <figcaption>Original Icosahedron</figcaption>
+        </td>
+        <td>
+          <img src="images/p6_icosa_1.png" align="middle" width="300vw" />
+          <figcaption>Icosahedron after 1 subdivision</figcaption>
+        </td>
+        <td>
+          <img src="images/p6_icosa_2.png" align="middle" width="300vw" />
+          <figcaption>Icosahedron after 2 subdivisions</figcaption>
+        </td>
+        <td>
+          <img src="images/p6_icosa_3.png" align="middle" width="300vw" />
+          <figcaption>Icosahedron after 3 subdivisions</figcaption>
+        </td>
+        <td>
+          <img src="images/p6_icosa_4.png" align="middle" width="300vw" />
+          <figcaption>Icosahedron after 4 subdivisions</figcaption>
+        </td>
+      </tr>
+      <tr align="center">
+        <td>
+          <img src="images/p6_torus_0.png" align="middle" width="300vw" />
+          <figcaption>Original Torus</figcaption>
+        </td>
+        <td>
+          <img src="images/p6_torus_1.png" align="middle" width="300vw" />
+          <figcaption>Torus after 1 subdivision</figcaption>
+        </td>
+        <td>
+          <img src="images/p6_torus_2.png" align="middle" width="300vw" />
+          <figcaption>Torus after 2 subdivisions</figcaption>
+        </td>
+        <td>
+          <img src="images/p6_torus_3.png" align="middle" width="300vw" />
+          <figcaption>Torus after 3 subdivisions</figcaption>
+        </td>
+        <td>
+          <img src="images/p6_torus_4.png" align="middle" width="300vw" />
+          <figcaption>Torus after 4 subdivisions</figcaption>
+        </td>
+      </tr>
       <tr align="center">
         <td>
           <img src="images/p6_cube_0.png" align="middle" width="300vw" />
@@ -575,39 +620,46 @@ for (VertexIter v = mesh.verticesBegin(); v != mesh.verticesEnd(); v++) {
     </table>
   </div>
 
-  <div align="middle">
-    <table style="width: 100%">
-      <tr align="center">
-        <td>
-          <img src="images/p6_torus_0.png" align="middle" width="300vw" />
-          <figcaption>Original Torus</figcaption>
-        </td>
-        <td>
-          <img src="images/p6_torus_1.png" align="middle" width="300vw" />
-          <figcaption>Torus after 1 subdivision</figcaption>
-        </td>
-        <td>
-          <img src="images/p6_torus_2.png" align="middle" width="300vw" />
-          <figcaption>Torus after 2 subdivisions</figcaption>
-        </td>
-        <td>
-          <img src="images/p6_torus_3.png" align="middle" width="300vw" />
-          <figcaption>Torus after 3 subdivisions</figcaption>
-        </td>
-        <td>
-          <img src="images/p6_torus_4.png" align="middle" width="300vw" />
-          <figcaption>Torus after 4 subdivisions</figcaption>
-        </td>
-      </tr>
-    </table>
-  </div>
-
   <p>
   We observe that after each loop subdivision, the cube mesh becomes increasingly more rounded as the sharp corners/edges are smoothed away.
+  To reduce the effect of smoothing, we can pre-split a few edges to reduce the distortion effect of the upsampling.
   </p>
 
   <h3>Symmetric Subdivision on Cube</h3>
 
+  <p>
+  Looking at the previous screenshots of the original cube and its upsampled variants, we notice that the upsampling produces asymmetry along the diagonal of the cube face. This weird effect roots from the mesh asymmetry within each face of the cube. In particular, two of the vertices on each face are connected via a (diagonal) mesh edge and the other two aren't. Due to the weighting of the new vertex positions, the connected ones are closer together compared to the unconnected ones—resulting in shape asymmetry.
+</p>
+
+  <p>
+    To fix this asymmetry issue, we can preprocess the cube mesh by splitting the diagonal edge on each face so that we end up with a symmetric "X" on all faces. Then, upsampling no longer produces any asymmetry. See below for some screenshots of the results.
+  </p>
+  <div align="middle">
+    <table style="width: 100%">
+      <tr align="center">
+        <td>
+          <img src="images/p6_cube_sym_0.png" align="middle" width="300vw" />
+          <figcaption>Preprocessed Original Cube</figcaption>
+        </td>
+        <td>
+          <img src="images/p6_cube_sym_1.png" align="middle" width="300vw" />
+          <figcaption>Preprocessed Cube after 1 subdivision</figcaption>
+        </td>
+        <td>
+          <img src="images/p6_cube_sym_2.png" align="middle" width="300vw" />
+          <figcaption>Preprocessed Cube after 2 subdivisions</figcaption>
+        </td>
+        <td>
+          <img src="images/p6_cube_sym_3.png" align="middle" width="300vw" />
+          <figcaption>Preprocessed Cube after 3 subdivisions</figcaption>
+        </td>
+        <td>
+          <img src="images/p6_cube_sym_4.png" align="middle" width="300vw" />
+          <figcaption>Preprocessed Cube after 4 subdivisions</figcaption>
+        </td>
+      </tr>
+    </table>
+  </div>
   <h3>[Extra Credit] Support for Meshes with Boundaries </h3>
  
   <h3>[Extra Credit] \(\sqrt{3}\)-Subdivision</h3>
