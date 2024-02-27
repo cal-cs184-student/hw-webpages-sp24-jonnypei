@@ -134,7 +134,7 @@ BezierCurve::evaluateStep(std::vector<Vector2D> const &points) {
       </pre>
     </p>
 
-    <p>Below, we provide screenshots of our custom Bezier curve at each evaluation step, as well as slightly different Bezier curve:</p>
+    <p>Below, we provide screenshots of our custom Bezier curve at each evaluation step:</p>
 
     <div align="middle">
       <table style="width: 100%">
@@ -143,13 +143,17 @@ BezierCurve::evaluateStep(std::vector<Vector2D> const &points) {
             <img src="images/download.jpeg" align="middle" width="500vw" />
             <figcaption>Bezier Curve of 6 points with successive evaluateStep function calls at ~<code>t = 0.5</code>. </figcaption>
           </td>
-        </tr>
-        <tr align="center">
           <td>
             <img src="images/lerp5wline.png" align="middle" width="300vw" />
             <figcaption>Final Rendered Curve</figcaption>
           </td>
-        </tr>
+      </table>
+    </div>
+
+    <p>
+    We also display a slightly different Bezier curve by adjusting parameters:
+    <div align="middle">
+      <table style="width: 100%">
         <tr align="center">
           <td>
             <img src="images/differentCurve.png" align="middle" width="300vw" />
@@ -158,6 +162,7 @@ BezierCurve::evaluateStep(std::vector<Vector2D> const &points) {
         </tr>
       </table>
     </div>
+    </p>
 
 	<h2 align="left">Part 2: Bezier surfaces with separable 1D de Casteljau</h2>
 
