@@ -134,11 +134,63 @@
     Our implementation of an edge flip consists of the following steps:
 
     <ol>
-      <li><b>Boundary Check:</b></li>
-      <li><b>Mesh Labeling:</b></li>
-      <li><b>Re-assign half-edges:</b></li>
-      <li><b>Re-assign vertices:</b></li>
-      <li><b>Re-assign faces:</b></li>
+      <li><b>Boundary Check:</b> we check to ensure we never flip a boundary edge.</li>
+      <pre>
+if (e0->isBoundary()) {
+  return e0;
+}
+      </pre>
+      <li><b>Mesh Labeling:</b> for ease of implementation and debugging, we assign iter labels to all mesh components that could be affected by the flip operation.</li>
+      <pre>
+// Inner Halfedges
+HalfedgeIter h0 = e0->halfedge();
+HalfedgeIter h1 = h0->next();
+HalfedgeIter h2 = h1->next();
+HalfedgeIter h3 = h0->twin();
+HalfedgeIter h4 = h3->next();
+HalfedgeIter h5 = h4->next();
+
+// Outer Halfedges
+HalfedgeIter h1_outer = h1->twin();
+HalfedgeIter h2_outer = h2->twin();
+HalfedgeIter h4_outer = h4->twin();
+HalfedgeIter h5_outer = h5->twin();
+
+// Edges
+EdgeIter e1 = h1->edge();
+EdgeIter e2 = h2->edge();
+EdgeIter e3 = h4->edge();
+EdgeIter e4 = h5->edge();
+
+// Vertices
+VertexIter v0 = h0->vertex();
+VertexIter v1 = h3->vertex();
+VertexIter v2 = h2->vertex();
+VertexIter v3 = h5->vertex();
+
+// Faces
+FaceIter f0 = h0->face();
+FaceIter f1 = h3->face();      
+      </pre>
+      <li><b>Re-assign half-edges:</b> we use the <code>setNeighbors</code> function to set all pointers related to each half-edge.</li>
+<pre>
+h0->setNeighbors(h5, h3, v2, e0, f0);
+h1->setNeighbors(h0, h1_outer, v1, e1, f0);
+h2->setNeighbors(h4, h2_outer, v2, e2, f1);
+h3->setNeighbors(h2, h0, v3, e0, f1);
+h4->setNeighbors(h3, h4_outer, v0, e3, f1);
+h5->setNeighbors(h1, h5_outer, v3, e4, f0);
+</pre>
+      <li><b>Re-assign vertices:</b> we re-assign the half-edge pointer associated with the opposite vertices.</li>
+<pre>
+v0->halfedge() = h4;
+v2->halfedge() = h0;
+</pre>
+      <li><b>Re-assign faces:</b> we re-assign the half-edge pointer associated with each face.</li>
+<pre>
+f0->halfedge() = h0;
+f1->halfedge() = h3;
+</pre>
     </ol>
 
   We now display some screenshots of the teapot before and after some edge flips:
@@ -171,14 +223,70 @@
 	<h2 align="left">Part 5: Edge split</h2>
 
   <p>
-    Our implementation of an edge split consists of the following steps:
+    Our implementation of an edge split (without support for boundary edges) consists of the following steps:
     <ol>
-      <li><b>Boundary Check:</b></li>
-      <li><b>Mesh Labeling:</b></li>
-      <li><b>Mesh Creation:</b></li>
-      <li><b>Re-assign half-edges:</b></li>
-      <li><b>Re-assign vertices:</b></li>
-      <li><b>Re-assign faces:</b></li>
+      <li><b>Boundary Check:</b> we check to ensure we never flip a boundary edge.</li>
+<pre>
+if (e0->isBoundary()) {
+  return VertexIter();
+}
+</pre>
+      <li><b>Mesh Labeling:</b> we label the half-edges, edges, vertices, and faces. See previous part (Edge flip) for the labeling scheme.</li>
+      <li><b>Mesh Creation:</b> we create 6 new half-edges, 3 new edges, 3 new faces, and 1 new midpoint for the splitting operation.</li>
+<pre>
+// New inner half edges
+HalfedgeIter nh0 = newHalfedge();
+HalfedgeIter nh1 = newHalfedge();
+HalfedgeIter nh2 = newHalfedge();
+HalfedgeIter nh3 = newHalfedge();
+HalfedgeIter nh4 = newHalfedge();
+HalfedgeIter nh5 = newHalfedge();
+
+// New edges
+EdgeIter ne1 = newEdge();
+EdgeIter ne2 = newEdge();
+EdgeIter ne3 = newEdge();
+
+// New faces
+FaceIter nf1 = newFace();
+FaceIter nf2 = newFace();
+FaceIter nf3 = newFace();
+
+// Midpoint (m)
+VertexIter m = newVertex();
+m->position = 0.5 * (v0->position + v1->position);
+</pre>
+      <li><b>Re-assign original half-edges:</b> we use the <code>setNeighbors</code> function to set all pointers for each of the original half-edges.</li>
+<pre>
+h0->setNeighbors(nh2, nh3, v0, e0, f0);
+h1->setNeighbors(nh1, h1_outer, v1, e1, nf1);
+h2->setNeighbors(h0, h2_outer, v2, e2, f0);
+h3->setNeighbors(nh4, nh0, v1, ne1, nf3);
+h4->setNeighbors(nh5, h4_outer, v0, e3, nf2);
+h5->setNeighbors(h3, h5_outer, v3, e4, nf3);
+</pre>
+      <li><b>Assign new half-edges:</b> we use the <code>setNeighbors</code> function to assign all pointers for each of the newly created half-edges.</li>
+<pre>
+nh0->setNeighbors(h1, h3, m, ne1, nf1);
+nh1->setNeighbors(nh0, nh2, v2, ne2, nf1);
+nh2->setNeighbors(h2, nh1, m, ne2, f0);
+nh3->setNeighbors(h4, h0, m, e0, nf2);
+nh4->setNeighbors(h5, nh5, m, ne3, nf3);
+nh5->setNeighbors(nh3, nh4, v3, ne3, nf2);
+</pre>
+      <li><b>Resolve remaining half-edge pointers:</b> we assign the remaining half-edge pointers for the midpoint, new edges, and all faces.</li>
+<pre>
+m->halfedge() = nh0;
+
+ne1->halfedge() = nh0;
+ne2->halfedge() = nh1;
+ne3->halfedge() = nh4;
+
+f0->halfedge() = h0;
+nf1->halfedge() = nh0;
+nf2->halfedge() = nh3;
+nf3->halfedge() = h3;
+</pre>
     </ol>
 
     We now display some screenshots of the teapot before and after some edge operations:
