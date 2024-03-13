@@ -110,7 +110,114 @@
 	<h2 align="middle">Part 1: Ray Generation and Scene Intersection</h1>
 	<hr />
 
-	<p>stuff</p>
+	<p>
+		<b>Ray Generation Process:</b> the <code> generate_ray</code> function in camera.cpp works by 
+		first converting the image point to camera space, then generating a cooresponding ray in world space.
+		The image point is converted to camera space with the following code. 
+		<pre>
+			auto new_x = (x - 0.5) * 2 * tan(hFov * M_PI / 360);
+			auto new_y = (y - 0.5) * 2 * tan(vFov * M_PI / 360);
+			auto point = Vector3D(new_x, new_y, -1);
+		</pre>
+
+		The <code> new_x, new_y </code> were rescaled to fit in the new range \( [-tan(fov/2), tan(fov/2)]  \) 
+		and the z-coord was chosen as -1 since the image plane is defined as being aligned at z = -1.
+
+		Finally, the ray endpoint and origin were converted to world space using the <code>c2w</code> transformation matrix, which results in the final generated ray.
+
+		<br>
+		<br>
+		<b> Triangle Intersection:</b>  Triangle intersection was implemented using Möller - Trumbore intersection. <br>
+
+		<pre>
+			Vector3D edge1 = p2 - p1;
+			Vector3D edge2 = p3 - p1;
+
+			auto s1 = cross(r.d, edge2);
+			auto frac = dot(s1,edge1);
+
+			if (frac > -EPS_D && frac < EPS_D) {
+				return false;
+			}
+		</pre>
+
+		This section sets up the variables \( E_1, E_2, S_1 \) and checks that \( S_1 \) is non-zero so the inverse is defined. This code also checks that the ray is not parallel to the triangle plane.
+		
+		<pre>
+
+			auto inv_det = 1.0 / frac;
+
+			auto s = r.o - p1;
+			double b2 = inv_det * dot(s, s1);
+
+			if (b2 < 0 || b2 > 1) {
+				return false;
+			}
+
+			auto s2 = cross(s, edge1);
+			double b1 = inv_det * dot(s2,r.d);
+
+			if (b1 < 0 || b1 > 1 || b1+b2 > 1) {
+				return false;
+			}
+
+			double t = inv_det * dot(edge2, s2);
+		</pre>
+		This section calculates the barycentric coordinate values \( b_1, b_2\), and returns the value of \(t\) cooresponding to the intersection point. 
+		
+		<pre>
+			isect->n = (1 - b1 - b2) * n1 + b2 * n2 + b1 * n3;
+		</pre>
+
+		Finally, the barycentric points are then used to fine the intersecion plane normal, which is shown above. <br> <br>
+
+		<b> Sphere Intersection: </b> Sphere intersection was implemented as described in lecture by using the quadratic formula.
+		<pre>
+			auto a = dot(r.d, r.d);
+			auto b = 2.0 * dot(r.o - this->o, r.d);
+			auto c = dot(r.o - this->o, r.o - this->o) - this->r2;
+
+			if (b * b - 4.0 * a * c < 0) {
+				return false;
+			}
+
+			t1 = (-b - sqrt(b * b - 4 * a * c)) / (2 * a);
+			t2 = (-b + sqrt(b * b - 4 * a * c)) / (2 * a);
+		</pre>
+		a,b, and c are calculated using the method on lecture slides, and a preliminary check is done to make sure the value of t being found is real, otherwise the intersection doesn't exist. 
+		Once this is done, both intersection points <code>t1, t2</code> are found and the smallest is returned as the <code>t</code> parameter cooresponding to the sphere-ray intersection point. The <code>r.max_t</code> 
+		parameter is also set here so that only the closest intersection is considered. 
+		<br><br>
+		Finally, the following code finds the normal vector of the intersection, which works by finding the direction from origin to intersect point and then normalizing it.
+
+		<pre>
+			auto normvec = ((r.o + r.d * i->t) - this->o);
+			normvec.normalize();
+
+		</pre>
+		
+		<br>
+
+
+	
+	
+	
+	
+	</p>
+
+	<div align="middle">
+		<table style="width: 100%">
+		  <tr align="center">
+			<td>
+			  <img src="images/normalshading1.png" align="middle" width="500vw" />
+			  <figcaption>Example of normal shading on CBspheres.dae. </figcaption>
+			</td>
+			<td>
+			  <img src="images/normalshading2.png" align="middle" width="500vw" />
+			  <figcaption>Example of normal shading on CBgems.dae. </figcaption>
+			</td>
+		</table>
+	  </div>
 
 	<hr />
 	<h2 align="middle">Part 2: Bounding Volume Hierarchy</h1>
@@ -134,6 +241,53 @@
 	<h2 align="middle">Part 5: Adaptive Sampling</h1>
 	<hr />
 
-	<p>stuff</p>
+	<p><b>How does Adaptive Sampling work: </b>Adaptive Sampling works by creating a distribution
+     based on the sample rays collected so far, and terminates when the sampled result 
+     is most likely correct based on that distribution. In our implementation, being likely correct means being 95% confident that 
+    the sampled illuminance is within \( maxTolerance *  \mu \) away. The values \( \mu\) and \( \sigma^2 \)are calculated based on an accumulating total and checked every samplesPerBatch iterations. <br>
+		<b>Adaptive Sampling Implementation: </b>
+		
+		<pre>
+			double sample_illum = sample_radiance.illum();
+
+			s1 += sample_illum;
+			s2 += sample_illum * sample_illum;
+			batch_size++;
+
+    
+
+			// adaptive sampling
+			if (batch_size % samplesPerBatch == 0) {
+			
+				auto mu = s1 / n;
+				auto var = (1.0 / (n - 1)) * (s2 - (s1 * s1) / n);
+				auto I2 = 1.96 * 1.96 * var / n;
+				auto cutoff2 = maxTolerance * maxTolerance * mu * mu;
+				
+				if (I2 <= cutoff2) {
+					break;
+				}
+			}
+		</pre>
+
+		In our implementation, rather than compute <code>I</code> and <code>cutoff</code> directly, we just calcuate the squared versions and compare those to avoid using <code>sqrt</code>. 
+		Our actual implementation checks for termination whenever <code> batch_size % samplesPerBatch == 0 </code>, and calculates the equation presented in the spec. 
+
+
+	</p>
+
+	<div align="middle">
+		<table style="width: 100%">
+		  <tr align="center">
+			<td>
+			  <img src="images/bunny.png" align="middle" width="500vw" />
+			  <figcaption>CBBunny.dae noise free rendered result. </figcaption>
+			</td>
+			<td>
+			  <img src="images/bunny_rate.png" align="middle" width="500vw" />
+			  <figcaption>CBBunny.dae heatmap showing samples taken per pixel. </figcaption>
+			</td>
+		</table>
+	  </div>
 
 </html>
