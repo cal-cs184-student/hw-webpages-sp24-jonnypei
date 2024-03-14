@@ -229,7 +229,95 @@
 	<h2 align="middle">Part 3: Direct Illumination</h1>
 	<hr />
 
-	<p>stuff</p>
+	<p><b>estimate_direct_lighting_hemisphere: </b> Uniform hemisphere sampling works by taking an intersection 
+		point to analyze the lighting of and then taking random samples across a hemisphere in order to determine
+		 its light level. First, after determinining the <code>hit_p</code> of the intersection, a randomly sampled ray is generated at that location, 
+		 taking note that it is in object space and needs to be coverted with <code>o2w</code>. <code>EPS_F</code> is set here so the intersecting place is at least some distance away from the ray.
+
+		 <pre>
+			auto samplevec = hemisphereSampler->get_sample(); 
+			Ray r_sample = Ray(hit_p, (o2w * samplevec).unit());
+			r_sample.min_t = EPS_F; //for super close collision purposes
+		 </pre>
+		
+		 After this, <code>r_sample</code> is passed through an intersection test and the intersect point's emmission is then added to the sampler
+		 using the reflection equation in lecture. The value for <code>cosj</code> was derived based on the original idea of how the image plane is represented in world space.
+		  
+
+		 <pre>
+			Intersection intersecttest;
+
+			if (bvh->intersect(r_sample, &intersecttest)) {
+			auto cosj = dot(samplevec, Vector3D(0, 0, 1));
+			auto sample = isect.bsdf->f(w_out, samplevec) *
+							intersecttest.bsdf->get_emission() * cosj;
+			auto pdf = 1 / (2 * PI);
+
+			radianceSampler += sample / pdf;
+			}
+		 </pre>
+
+		 Finally, radianceSampler is normalized over samples taken and returned.
+		 
+		 <pre>
+			return radianceSampler / num_samples;
+		 </pre>
+		 
+
+
+
+		<div align="middle">
+			<table style="width: 100%">
+			  <tr align="center">
+				<td>
+				  <img src="images/CBbunny_H_16_8.png" align="middle" width="300vw" />
+				  <figcaption>CBbunny.dae with uniform hemisphere sampling (s = 16, l = 8).</figcaption>
+				</td>
+			  </tr>
+			</table>
+		  </div>
+		<b>estimate_direct_lighting_importance: </b> 
+
+
+		<div align="middle">
+			<table style="width: 100%">
+			  <tr align="center">
+				<td>
+				  <img src="images/CBbunny_H_16_8 copy.png" align="middle" width="300vw" />
+				  <figcaption>CBbunny.dae with importance sampling (s = 16, l = 8).</figcaption>
+				</td>
+			  </tr>
+			</table>
+		  </div>
+	
+		  <b>Noise Level Comparision: </b>
+
+		  <div align="middle">
+			<table style="width: 100%">
+			  <tr align="center">
+				<td>
+				  <img src="images/blob1.png" align="middle" width="300vw" />
+				  <figcaption>CBspheres_lambdarian.dae with l=1.</figcaption>
+				</td>
+				<td>
+					<img src="images/blob4.png" align="middle" width="300vw" />
+					<figcaption>CBspheres_lambdarian.dae with l=4.</figcaption>
+				</td>
+				<td>
+					<img src="images/blob16.png" align="middle" width="300vw" />
+					<figcaption>CBspheres_lambdarian.dae with l=16.</figcaption>
+				</td>
+				<td>
+					<img src="images/blob64.png" align="middle" width="300vw" />
+					<figcaption>CBspheres_lambdarian.dae with l=64.</figcaption>
+				</td>  
+			  </tr>
+			</table>
+		  </div>
+
+
+	
+	</p>
 
 	<hr />
 	<h2 align="middle">Part 4: Global Illumination</h1>
@@ -271,7 +359,7 @@
 		</pre>
 
 		In our implementation, rather than compute <code>I</code> and <code>cutoff</code> directly, we just calcuate the squared versions and compare those to avoid using <code>sqrt</code>. 
-		Our actual implementation checks for termination whenever <code> batch_size % samplesPerBatch == 0 </code>, and calculates the equation presented in the spec. 
+		We also check for termination whenever <code> batch_size % samplesPerBatch == 0 </code>, and calculates the equation presented in the spec. 
 
 
 	</p>
