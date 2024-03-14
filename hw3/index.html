@@ -278,6 +278,8 @@
 		  </div>
 		<b>estimate_direct_lighting_importance: </b> 
 
+		TODO
+
 
 		<div align="middle">
 			<table style="width: 100%">
@@ -314,8 +316,31 @@
 			  </tr>
 			</table>
 		  </div>
+		  <br>
 
+		  Here, it is clear that the noise drastically reduces and the number of samples taken per light source increases. Which makes sense since the random samples will converge to their true values better over the course of many samples. 
+		  It is also important to note that the starting render at l=1 performs quite well still, due to the use of lighting sampling rather than random sampling. 
+		  <br> <br>
 
+		  <b>Uniform vs Importance Sampling: </b> <br>
+		  As generally expected, the noise when performing importance sampling is drastically lower than when performing uniform hemisphere 
+		  sampling. This can be noticed in the CBbunny.dae renders above with (s=16, l=8). Even though both renders have the same number of samples, the 
+		  use of importance sampling allows for the pixel to converge to the true luminance much quicker, and reduces the pixelated variance present. Another
+		  interesting comparision can be seen below.
+		
+		  <div align="middle">
+			<table style="width: 100%">
+			  <tr align="center">
+				<td>
+				  <img src="images/bunny_1_1.png" align="middle" width="300vw" />
+				  <figcaption>CBbunny.dae with importance sampling (s = 1, l = 1).</figcaption>
+				</td>
+			  </tr>
+			</table>
+		  </div>
+		  Here, only 1 sample was taken per pixel per light, allowing it to converge and finish rendering much faster than the two methods described above.
+		  Even though this is the case, the image has comparable quality to the uniform hemisphere sample, which uses many more samples. This means that important sampling 
+		  is a useful optimization to improve picture quality as well as render similar quality pictures with less computations.  <b>TODO</b>
 	
 	</p>
 
