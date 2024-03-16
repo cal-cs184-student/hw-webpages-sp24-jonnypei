@@ -115,9 +115,9 @@
 		first converting the image point to camera space, then generating a cooresponding ray in world space.
 		The image point is converted to camera space with the following code. 
 		<pre>
-			auto new_x = (x - 0.5) * 2 * tan(hFov * M_PI / 360);
-			auto new_y = (y - 0.5) * 2 * tan(vFov * M_PI / 360);
-			auto point = Vector3D(new_x, new_y, -1);
+auto new_x = (x - 0.5) * 2 * tan(hFov * M_PI / 360);
+auto new_y = (y - 0.5) * 2 * tan(vFov * M_PI / 360);
+auto point = Vector3D(new_x, new_y, -1);
 		</pre>
 
 		The <code> new_x, new_y </code> were rescaled to fit in the new range \( [-tan(fov/2), tan(fov/2)]  \) 
@@ -130,59 +130,58 @@
 		<b> Triangle Intersection:</b>  Triangle intersection was implemented using Möller - Trumbore intersection. <br>
 
 		<pre>
-			Vector3D edge1 = p2 - p1;
-			Vector3D edge2 = p3 - p1;
+Vector3D edge1 = p2 - p1;
+Vector3D edge2 = p3 - p1;
 
-			auto s1 = cross(r.d, edge2);
-			auto frac = dot(s1,edge1);
+auto s1 = cross(r.d, edge2);
+auto frac = dot(s1,edge1);
 
-			if (frac > -EPS_D && frac < EPS_D) {
-				return false;
-			}
+if (frac > -EPS_D && frac < EPS_D) {
+    return false;
+}
 		</pre>
 
 		This section sets up the variables \( E_1, E_2, S_1 \) and checks that \( S_1 \) is non-zero so the inverse is defined. This code also checks that the ray is not parallel to the triangle plane.
 		
 		<pre>
+auto inv_det = 1.0 / frac;
 
-			auto inv_det = 1.0 / frac;
+auto s = r.o - p1;
+double b2 = inv_det * dot(s, s1);
 
-			auto s = r.o - p1;
-			double b2 = inv_det * dot(s, s1);
+if (b2 < 0 || b2 > 1) {
+    return false;
+}
 
-			if (b2 < 0 || b2 > 1) {
-				return false;
-			}
+auto s2 = cross(s, edge1);
+double b1 = inv_det * dot(s2,r.d);
 
-			auto s2 = cross(s, edge1);
-			double b1 = inv_det * dot(s2,r.d);
+if (b1 < 0 || b1 > 1 || b1+b2 > 1) {
+    return false;
+}
 
-			if (b1 < 0 || b1 > 1 || b1+b2 > 1) {
-				return false;
-			}
-
-			double t = inv_det * dot(edge2, s2);
+double t = inv_det * dot(edge2, s2);
 		</pre>
 		This section calculates the barycentric coordinate values \( b_1, b_2\), and returns the value of \(t\) cooresponding to the intersection point. 
 		
 		<pre>
-			isect->n = (1 - b1 - b2) * n1 + b2 * n2 + b1 * n3;
+isect->n = (1 - b1 - b2) * n1 + b2 * n2 + b1 * n3;
 		</pre>
 
 		Finally, the barycentric points are then used to fine the intersecion plane normal, which is shown above. <br> <br>
 
 		<b> Sphere Intersection: </b> Sphere intersection was implemented as described in lecture by using the quadratic formula.
 		<pre>
-			auto a = dot(r.d, r.d);
-			auto b = 2.0 * dot(r.o - this->o, r.d);
-			auto c = dot(r.o - this->o, r.o - this->o) - this->r2;
+auto a = dot(r.d, r.d);
+auto b = 2.0 * dot(r.o - this->o, r.d);
+auto c = dot(r.o - this->o, r.o - this->o) - this->r2;
 
-			if (b * b - 4.0 * a * c < 0) {
-				return false;
-			}
+if (b * b - 4.0 * a * c < 0) {
+    return false;
+}
 
-			t1 = (-b - sqrt(b * b - 4 * a * c)) / (2 * a);
-			t2 = (-b + sqrt(b * b - 4 * a * c)) / (2 * a);
+t1 = (-b - sqrt(b * b - 4 * a * c)) / (2 * a);
+t2 = (-b + sqrt(b * b - 4 * a * c)) / (2 * a);
 		</pre>
 		a,b, and c are calculated using the method on lecture slides, and a preliminary check is done to make sure the value of t being found is real, otherwise the intersection doesn't exist. 
 		Once this is done, both intersection points <code>t1, t2</code> are found and the smallest is returned as the <code>t</code> parameter cooresponding to the sphere-ray intersection point. The <code>r.max_t</code> 
@@ -191,18 +190,11 @@
 		Finally, the following code finds the normal vector of the intersection, which works by finding the direction from origin to intersect point and then normalizing it.
 
 		<pre>
-			auto normvec = ((r.o + r.d * i->t) - this->o);
-			normvec.normalize();
-
+auto normvec = ((r.o + r.d * i->t) - this->o);
+normvec.normalize();
 		</pre>
 		
-		<br>
-
-
-	
-	
-	
-	
+		<p><b>Normal Shading on Small <code>.dae</code> Files:</b></p>
 	</p>
 
 	<div align="middle">
@@ -210,11 +202,11 @@
 		  <tr align="center">
 			<td>
 			  <img src="images/normalshading1.png" align="middle" width="500vw" />
-			  <figcaption>Example of normal shading on CBspheres.dae. </figcaption>
+			  <figcaption>Example of normal shading on <code>CBspheres.dae</code>. </figcaption>
 			</td>
 			<td>
 			  <img src="images/normalshading2.png" align="middle" width="500vw" />
-			  <figcaption>Example of normal shading on CBgems.dae. </figcaption>
+			  <figcaption>Example of normal shading on <code>CBgems.dae</code>. </figcaption>
 			</td>
 		</table>
 	  </div>
@@ -223,9 +215,105 @@
 	<h2 align="middle">Part 2: Bounding Volume Hierarchy</h1>
 	<hr />
 
-	<p>stuff</p>
+	<p><b>BVH Construction Algorithm:</b> we build up the BVH by recursively splitting the primitives based on a heuristic on the dimensions of the bounding centroid box. Its structure is described below:</p>
+	<ol>
+		<li><b>Create a new node:</b> <code>BVHNode *node = new BVHNode(bbox);</code></li>
+		<li><b>Base Case:</b> if the number of primitives is less than or equal to the max leaf size, then we simply set the start and end pointers for the primitive list.</li>
+		<pre>
+if (num_prim <= max_leaf_size) {
+    node->start = start;
+    node->end = end;
+}
+</pre>
+<li><b>Recursive Case:</b> we split the primitives (based on a heuristic) among the two children of the created <code>BVHNode</code>. We describe our heuristic in the next section.</li>
+		<li><b>Return the node.</b></li>
+	</ol>
+	<p><b>BVH Splitting Heuristic:</b> we split the primitives based on the centroid of the centroid bounding box. Specifically, we compare a primitive's centroid with that of the centroid bounding box, along the largest dimension of the centroid bounding box. We provide code implementations below:</p>
 
-	<hr />
+	<ol>
+		<li><b>Computation of centroid bounding box:</b>
+			<pre>
+BBox bbox, centroid_box;
+
+for (auto p = start; p != end; p++) {
+    BBox bb = (*p)->get_bbox();
+    bbox.expand(bb);
+    centroid_box.expand(bb.centroid());
+}
+
+// At this point, centroid_box contains the centroids of all bounding boxes
+			</pre>
+		</li>
+		<li><b>Splitting operation:</b>
+			<pre>
+int axis = maxDimension(centroid_box.extent);
+
+// Compute left and right sides
+std::vector<Primitive *> prims_l;
+std::vector<Primitive *> prims_r;
+for (auto p = start; p != end; p++) {
+    if ((*p)->get_bbox().centroid()[axis] >= centroid_box.centroid()[axis]) {
+	prims_l.push_back(*p);
+    } else {
+	prims_r.push_back(*p);
+    }
+}
+
+// Compute split pointer
+auto split = start + prims_l.size();
+
+// Move the objects into positions
+for (int i = 0; i < num_prim; i++) {
+    if (i < prims_l.size()) {
+	*(start + i) = prims_l[i];
+    } else {
+	*(start + i) = prims_r[i - prims_l.size()];
+    }
+}
+
+node->l = construct_bvh(start, split, max_leaf_size);
+node->r = construct_bvh(split, end, max_leaf_size);
+			</pre>
+		</li>
+	</ol>
+
+	<p><b>Normal Shading on Large <code>.dae</code> Files:</b></p>
+
+	<div align="middle">
+		<table style="width: 100%">
+		  <tr align="center">
+			<td>
+			  <img src="images/p2_blob.png" align="middle" width="300vw" />
+			  <figcaption>Example of normal shading on <code>blob.dae</code>.</figcaption>
+			</td>
+			<td>
+				<img src="images/p2_Blucy.png" align="middle" width="300vw" />
+				<figcaption>Example of normal shading on <code>CBlucy.dae</code>.</figcaption>
+			</td>
+			<td>
+				<img src="images/p2_dragon.png" align="middle" width="300vw" />
+				<figcaption>Example of normal shading on <code>dragon.dae</code>.</figcaption>
+			</td>
+		  </tr>
+		</table>
+	  </div>
+	
+	  <p><b>With vs. Without BVH Acceleration:</b> we observed substantial speedups on rendering times, displayed in the table below. We found empirical evidence supporting the asymptotic speedup of BVH, as the rendering time seems to go from approximately linear to logarithmic with respect to the number of primitives. An interesting result is that <code>CBlucy.dae</code> took the least time to render, despite it being the most geometrically complex; we believe that this is due to the scene's small triangles, which are rendered quickly via BVH. 
+	
+	  <div align="middle">
+		<table style="width: 100%">
+		  <tr align="center">
+			<td>
+			  <img src="images/p2_comparison_table.png" align="middle" width="300vw" />
+			  <figcaption>Comparison Table of Renders Without and With BVH Acceleration.</figcaption>
+			</td>
+		  </tr>
+		</table>
+	  </div>
+
+
+
+	  <hr />
 	<h2 align="middle">Part 3: Direct Illumination</h1>
 	<hr />
 
@@ -235,9 +323,9 @@
 		 taking note that it is in object space and needs to be coverted with <code>o2w</code>. <code>EPS_F</code> is set here so the intersecting place is at least some distance away from the ray.
 
 		 <pre>
-			auto samplevec = hemisphereSampler->get_sample(); 
-			Ray r_sample = Ray(hit_p, (o2w * samplevec).unit());
-			r_sample.min_t = EPS_F; //for super close collision purposes
+auto samplevec = hemisphereSampler->get_sample(); 
+Ray r_sample = Ray(hit_p, (o2w * samplevec).unit());
+r_sample.min_t = EPS_F; //for super close collision purposes
 		 </pre>
 		
 		 After this, <code>r_sample</code> is passed through an intersection test and the intersect point's emmission is then added to the sampler
@@ -245,26 +333,22 @@
 		  
 
 		 <pre>
-			Intersection intersecttest;
+Intersection intersecttest;
 
-			if (bvh->intersect(r_sample, &intersecttest)) {
-			auto cosj = dot(samplevec, Vector3D(0, 0, 1));
-			auto sample = isect.bsdf->f(w_out, samplevec) *
-							intersecttest.bsdf->get_emission() * cosj;
-			auto pdf = 1 / (2 * PI);
+if (bvh->intersect(r_sample, &intersecttest)) {
+    auto cosj = dot(samplevec, Vector3D(0, 0, 1));
+    auto sample = isect.bsdf->f(w_out, samplevec) * intersecttest.bsdf->get_emission() * cosj;
+    auto pdf = 1 / (2 * PI);
 
-			radianceSampler += sample / pdf;
-			}
+    radianceSampler += sample / pdf;
+}
 		 </pre>
 
 		 Finally, radianceSampler is normalized over samples taken and returned.
 		 
 		 <pre>
-			return radianceSampler / num_samples;
+return radianceSampler / num_samples;
 		 </pre>
-		 
-
-
 
 		<div align="middle">
 			<table style="width: 100%">
@@ -276,11 +360,43 @@
 			  </tr>
 			</table>
 		  </div>
-		<b>estimate_direct_lighting_importance: </b> 
+		<b>estimate_direct_lighting_importance: </b> Importance sampling follows the same approach as uniform sampling, with a few modifications. Instead of sampling uniformly over a hemisphere, we sample uniformly from each light source and only consider rays that hit the intersection points. In particular, for a given pixel, we sample one ray from each point source, and <code>ns_area_light</code> samples from each area source. The algorithm also makes sure to reject "shadow rays" that are on the opposite side of the incoming ray (with respect to the reflection surface).
+		See below for our code implementation:
+		<pre>
+for (auto light = scene->lights.begin(); light != scene->lights.end(); light++) {
+    Vector3D wi;
+    double distToLight;
+    double pdf;
 
-		TODO
+    Vector3D L;
+    Vector3D L_total = Vector3D();
+    int num_samples = 0;
 
+    for (int i = 0; i < ns_area_light; i++) {
+	auto L = (*light)->sample_L(hit_p, &wi, &distToLight, &pdf);
+	auto cosj = dot(wi, isect.n);
 
+	Ray r_sample = Ray(hit_p, wi);
+	r_sample.min_t = EPS_F;
+	r_sample.max_t = distToLight - EPS_F;
+	Intersection next_isect;
+
+	if (cosj > 0 && distToLight > 0 && !(bvh->intersect(r_sample, &next_isect))) {
+	    auto sample = isect.bsdf->f(w_out, wi) * L * cosj;
+	
+	    L_total += sample / pdf;
+	}
+	num_samples++;
+	
+	if ((*light)->is_delta_light()) {
+	    break;
+	}
+    }
+    L_out += L_total / num_samples;
+}
+	
+return L_out;
+		</pre>
 		<div align="middle">
 			<table style="width: 100%">
 			  <tr align="center">
@@ -340,8 +456,10 @@
 		  </div>
 		  Here, only 1 sample was taken per pixel per light, allowing it to converge and finish rendering much faster than the two methods described above.
 		  Even though this is the case, the image has comparable quality to the uniform hemisphere sample, which uses many more samples. This means that important sampling 
-		  is a useful optimization to improve picture quality as well as render similar quality pictures with less computations.  <b>TODO</b>
-	
+		  is a useful optimization to improve picture quality as well as render similar quality pictures with less computations.
+		</p>
+		  <p>
+		  In a nut shell, importance sampling "limits" the uniform hemisphere sampling to focus only on rays originating from light sources, which allows it to sample both more efficiently and effectively (i.e. more accurate colors). Furthermore, importance sampling is much more effective at rendering point light sources, as uniform sampling has a very low probability of sampling the exact point source ray. 
 	</p>
 
 	<hr />
@@ -357,30 +475,29 @@
 	<p><b>How does Adaptive Sampling work: </b>Adaptive Sampling works by creating a distribution
      based on the sample rays collected so far, and terminates when the sampled result 
      is most likely correct based on that distribution. In our implementation, being likely correct means being 95% confident that 
-    the sampled illuminance is within \( maxTolerance *  \mu \) away. The values \( \mu\) and \( \sigma^2 \)are calculated based on an accumulating total and checked every samplesPerBatch iterations. <br>
-		<b>Adaptive Sampling Implementation: </b>
+    the sampled illuminance is within \( maxTolerance \cdot \mu \) away. The values \( \mu\) and \( \sigma^2 \)are calculated based on an accumulating total and checked every samplesPerBatch iterations. <br>
+	</p>
+	<p>	
+	<b>Adaptive Sampling Implementation: </b>
 		
 		<pre>
-			double sample_illum = sample_radiance.illum();
+double sample_illum = sample_radiance.illum();
 
-			s1 += sample_illum;
-			s2 += sample_illum * sample_illum;
-			batch_size++;
+s1 += sample_illum;
+s2 += sample_illum * sample_illum;
+batch_size++;
 
-    
-
-			// adaptive sampling
-			if (batch_size % samplesPerBatch == 0) {
-			
-				auto mu = s1 / n;
-				auto var = (1.0 / (n - 1)) * (s2 - (s1 * s1) / n);
-				auto I2 = 1.96 * 1.96 * var / n;
-				auto cutoff2 = maxTolerance * maxTolerance * mu * mu;
-				
-				if (I2 <= cutoff2) {
-					break;
-				}
-			}
+// adaptive sampling
+if (batch_size % samplesPerBatch == 0) {
+    auto mu = s1 / n;
+    auto var = (1.0 / (n - 1)) * (s2 - (s1 * s1) / n);
+    auto I2 = 1.96 * 1.96 * var / n;
+    auto cutoff2 = maxTolerance * maxTolerance * mu * mu;
+	
+    if (I2 <= cutoff2) {
+	break;
+    }
+}
 		</pre>
 
 		In our implementation, rather than compute <code>I</code> and <code>cutoff</code> directly, we just calcuate the squared versions and compare those to avoid using <code>sqrt</code>. 
