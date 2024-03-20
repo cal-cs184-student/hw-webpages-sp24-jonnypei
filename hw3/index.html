@@ -474,6 +474,43 @@ return L_out;
 		<li>If we don't terminate, then we cast the next "bounce" of the ray <code>next_r</code> by sampling a direction from the BSDF via <code>isect.bsdf->sample_f()</code>, with decremented depth <code>r.depth - 1</code>.</li>
 		<li>If <code>next_r</code> intersects the <code>bvh</code>, we compute its radiance by recursively calling <code>at_least_one_bounce_radiance</code> on it. Then, we accumulate this indirect (via bouncing) light by scaling it with the current intersection reflectance (from step 4) and the direction of <code>next_r</code>. Finally, we make sure to divide by the BSDF sample pdf and, if applicable, the Russian Roulette continuation probability.</li>
 	</ol>
+	<p>We provide a full code implementation below:</p>
+<pre>
+L_out = one_bounce_radiance(r, isect); // direct illumination
+
+if (r.depth <= 1) { 
+    return L_out;
+}
+
+double rr_prob = 0.6;
+if (coin_flip(1 - rr_prob)) {
+    return L_out;
+}
+
+if (!isAccumBounces) {
+    L_out = Vector3D();
+}
+
+// indirect illumination
+Vector3D next_sample;
+double sample_pdf;
+
+auto sample = isect.bsdf->sample_f(w_out, &next_sample, &sample_pdf);
+auto cosj = dot(next_sample, Vector3D(0, 0, 1));
+
+auto wi_world = o2w * next_sample;
+auto next_r = Ray(hit_p, wi_world, (int) r.depth - 1);
+next_r.min_t = EPS_F;
+Intersection next_isect;
+
+if (cosj > 0 && bvh->intersect(next_r, &next_isect)) {
+    auto L = at_least_one_bounce_radiance(next_r, next_isect);
+
+    L_out += L * sample * cosj / sample_pdf / rr_prob;
+}
+
+return L_out;
+</pre>
 
 	<p><b>Example Renderings with Global Illumination:</b> we provide a couple example images rendered with global (direct and indirect) illumination, using 1024 samples per pixel:</p>
 
@@ -618,31 +655,31 @@ return L_out;
 	<table style="width: 100%">
 	  <tr align="center">
 		<td>
-		  <img src="images/dragon_s1.png" align="middle" width="150vw" />
+		  <img src="images/dragon_s1.png" align="middle" width="130vw" />
 		  <figcaption><code>s=1</code></figcaption>
 		</td>
 		<td>
-			<img src="images/dragon_s2.png" align="middle" width="150vw" />
+			<img src="images/dragon_s2.png" align="middle" width="130vw" />
 			<figcaption><code>s=2</code></figcaption>
 		  </td>
 		  <td>
-			<img src="images/dragon_s4.png" align="middle" width="150vw" />
+			<img src="images/dragon_s4.png" align="middle" width="130vw" />
 			<figcaption><code>s=4</code></figcaption>
 		  </td>
 		  <td>
-			<img src="images/dragon_s8.png" align="middle" width="150vw" />
+			<img src="images/dragon_s8.png" align="middle" width="130vw" />
 			<figcaption><code>s=8</code></figcaption>
 		  </td>
 		  <td>
-			<img src="images/dragon_s16.png" align="middle" width="150vw" />
+			<img src="images/dragon_s16.png" align="middle" width="130vw" />
 			<figcaption><code>s=16</code></figcaption>
 		  </td>
 		  <td>
-			<img src="images/dragon_s64.png" align="middle" width="150vw" />
+			<img src="images/dragon_s64.png" align="middle" width="130vw" />
 			<figcaption><code>s=64</code></figcaption>
 		  </td>
 		  <td>
-			<img src="images/dragon_s1024.png" align="middle" width="150vw" />
+			<img src="images/dragon_s1024.png" align="middle" width="130vw" />
 			<figcaption><code>s=1024</code></figcaption>
 		  </td>
 	</table>
@@ -681,7 +718,7 @@ if (batch_size % samplesPerBatch == 0) {
 		</pre>
 
 		In our implementation, rather than compute <code>I</code> and <code>cutoff</code> directly, we just calcuate the squared versions and compare those to avoid using <code>sqrt</code>. 
-		We also check for termination whenever <code> batch_size % samplesPerBatch == 0 </code>, and calculates the equation presented in the spec. 
+		We also check for termination whenever <code>batch_size % samplesPerBatch == 0</code>, and calculates the equation presented in the spec. 
 
 
 	</p>
