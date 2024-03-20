@@ -533,10 +533,6 @@ return L_out;
 			<figcaption><code>m=2</code></figcaption>
 		  </td>
 		  <td>
-			<img src="images/CBbunny_nobounce_m2.png" align="middle" width="150vw" />
-			<figcaption><code>m=2</code></figcaption>
-		  </td>
-		  <td>
 			<img src="images/CBbunny_nobounce_m3.png" align="middle" width="150vw" />
 			<figcaption><code>m=3</code></figcaption>
 		  </td>
@@ -568,10 +564,6 @@ return L_out;
 			<figcaption><code>m=2</code></figcaption>
 		  </td>
 		  <td>
-			<img src="images/CBbunny_bounce_m2.png" align="middle" width="150vw" />
-			<figcaption><code>m=2</code></figcaption>
-		  </td>
-		  <td>
 			<img src="images/CBbunny_bounce_m3.png" align="middle" width="150vw" />
 			<figcaption><code>m=3</code></figcaption>
 		  </td>
@@ -585,6 +577,9 @@ return L_out;
 		  </td>
 	</table>
   </div>
+
+  <p>We observe that in the renders for the 2nd bounce of light rays, the lighter spots are on surfaces that are not directly lit by light sources. The 3rd bounces of light appear to help generate an "ambient" background light for the scene. Overall, the incorporation of the indirect light bounces help improve the physical realism of the renders, and consequently their quality.</p>
+
 <p><b>Global Illumination with Russian Roulette:</b> we now display renderings of <code>CBbunny.dae</code> using Russian Roulette, with <code>max_ray_depth</code> set to 0, 1, 2, 3, 4, and 5. All renders below use 1024 samples per pixel and 32 samples per area light.</p>
 
 <div align="middle">
@@ -597,10 +592,6 @@ return L_out;
 		<td>
 			<img src="images/CBbunny_rr_m1.png" align="middle" width="150vw" />
 			<figcaption><code>m=1</code></figcaption>
-		  </td>
-		  <td>
-			<img src="images/CBbunny_rr_m2.png" align="middle" width="150vw" />
-			<figcaption><code>m=2</code></figcaption>
 		  </td>
 		  <td>
 			<img src="images/CBbunny_rr_m2.png" align="middle" width="150vw" />
@@ -627,31 +618,31 @@ return L_out;
 	<table style="width: 100%">
 	  <tr align="center">
 		<td>
-		  <img src="images/dragon_s1_rate.png" align="middle" width="150vw" />
+		  <img src="images/dragon_s1.png" align="middle" width="150vw" />
 		  <figcaption><code>s=1</code></figcaption>
 		</td>
 		<td>
-			<img src="images/dragon_s2_rate.png" align="middle" width="150vw" />
+			<img src="images/dragon_s2.png" align="middle" width="150vw" />
 			<figcaption><code>s=2</code></figcaption>
 		  </td>
 		  <td>
-			<img src="images/dragon_s4_rate.png" align="middle" width="150vw" />
+			<img src="images/dragon_s4.png" align="middle" width="150vw" />
 			<figcaption><code>s=4</code></figcaption>
 		  </td>
 		  <td>
-			<img src="images/dragon_s8_rate.png" align="middle" width="150vw" />
+			<img src="images/dragon_s8.png" align="middle" width="150vw" />
 			<figcaption><code>s=8</code></figcaption>
 		  </td>
 		  <td>
-			<img src="images/dragon_s16_rate.png" align="middle" width="150vw" />
+			<img src="images/dragon_s16.png" align="middle" width="150vw" />
 			<figcaption><code>s=16</code></figcaption>
 		  </td>
 		  <td>
-			<img src="images/dragon_s64_rate.png" align="middle" width="150vw" />
+			<img src="images/dragon_s64.png" align="middle" width="150vw" />
 			<figcaption><code>s=64</code></figcaption>
 		  </td>
 		  <td>
-			<img src="images/dragon_s1024_rate.png" align="middle" width="150vw" />
+			<img src="images/dragon_s1024.png" align="middle" width="150vw" />
 			<figcaption><code>s=1024</code></figcaption>
 		  </td>
 	</table>
