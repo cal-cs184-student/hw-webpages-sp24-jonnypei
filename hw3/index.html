@@ -201,11 +201,11 @@ normvec.normalize();
 		<table style="width: 100%">
 		  <tr align="center">
 			<td>
-			  <img src="images/normalshading1.png" align="middle" width="500vw" />
+			  <img src="images/normalshading1.png" align="middle" width="400vw" />
 			  <figcaption>Example of normal shading on <code>CBspheres.dae</code>. </figcaption>
 			</td>
 			<td>
-			  <img src="images/normalshading2.png" align="middle" width="500vw" />
+			  <img src="images/normalshading2.png" align="middle" width="400vw" />
 			  <figcaption>Example of normal shading on <code>CBgems.dae</code>. </figcaption>
 			</td>
 		</table>
@@ -304,7 +304,7 @@ node->r = construct_bvh(split, end, max_leaf_size);
 		<table style="width: 100%">
 		  <tr align="center">
 			<td>
-			  <img src="images/p2_comparison_table.png" align="middle" width="1000vw" />
+			  <img src="images/p2_comparison_table.png" align="middle" width="800vw" />
 			  <figcaption>Comparison Table of Renders Without and With BVH Acceleration.</figcaption>
 			</td>
 		  </tr>
@@ -354,7 +354,7 @@ return radianceSampler / num_samples;
 			<table style="width: 100%">
 			  <tr align="center">
 				<td>
-				  <img src="images/CBbunny_H_16_8.png" align="middle" width="300vw" />
+				  <img src="images/CBbunny_H_16_8.png" align="middle" width="500vw" />
 				  <figcaption><code>CBbunny.dae</code> with uniform hemisphere sampling (<code>s=16</code>, <code>l=8</code>).</figcaption>
 				</td>
 			  </tr>
@@ -401,33 +401,33 @@ return L_out;
 			<table style="width: 100%">
 			  <tr align="center">
 				<td>
-				  <img src="images/CBbunny_H_16_8 copy.png" align="middle" width="300vw" />
+				  <img src="images/CBbunny_H_16_8 copy.png" align="middle" width="500vw" />
 				  <figcaption><code>CBbunny.dae</code> with importance sampling (<code>s=16</code>, <code>l=8</code>).</figcaption>
 				</td>
 			  </tr>
 			</table>
 		  </div>
 	
-		  <b>Noise Level Comparision: </b>
+		  <b>Noise Level Comparison of <code>CBspheres_lambdarian.dae</code>: </b>
 
 		  <div align="middle">
 			<table style="width: 100%">
 			  <tr align="center">
 				<td>
-				  <img src="images/blob1.png" align="middle" width="300vw" />
-				  <figcaption><code>CBspheres_lambdarian.dae</code> with <code>l=1</code>.</figcaption>
+				  <img src="images/blob1.png" align="middle" width="200vw" />
+				  <figcaption><code>l=1</code></figcaption>
 				</td>
 				<td>
-					<img src="images/blob4.png" align="middle" width="300vw" />
-					<figcaption><code>CBspheres_lambdarian.dae</code> with <code>l=4</code>.</figcaption>
+					<img src="images/blob4.png" align="middle" width="200vw" />
+					<figcaption><code>l=4</code></figcaption>
 				</td>
 				<td>
-					<img src="images/blob16.png" align="middle" width="300vw" />
-					<figcaption><code>CBspheres_lambdarian.dae</code> with <code>l=16</code>.</figcaption>
+					<img src="images/blob16.png" align="middle" width="200vw" />
+					<figcaption><code>l=16</code></figcaption>
 				</td>
 				<td>
-					<img src="images/blob64.png" align="middle" width="300vw" />
-					<figcaption><code>CBspheres_lambdarian.dae</code> with <code>l=64</code>.</figcaption>
+					<img src="images/blob64.png" align="middle" width="200vw" />
+					<figcaption><code>l=64</code></figcaption>
 				</td>  
 			  </tr>
 			</table>
@@ -448,7 +448,7 @@ return L_out;
 			<table style="width: 100%">
 			  <tr align="center">
 				<td>
-				  <img src="images/bunny_1_1.png" align="middle" width="300vw" />
+				  <img src="images/bunny_1_1.png" align="middle" width="500vw" />
 				  <figcaption><code>CBbunny.dae</code> with importance sampling (<code>s=1</code>, <code>l=1</code>).</figcaption>
 				</td>
 			  </tr>
@@ -475,23 +475,23 @@ return L_out;
 		<li>If <code>next_r</code> intersects the <code>bvh</code>, we compute its radiance by recursively calling <code>at_least_one_bounce_radiance</code> on it. Then, we accumulate this indirect (via bouncing) light by scaling it with the current intersection reflectance (from step 4) and the direction of <code>next_r</code>. Finally, we make sure to divide by the BSDF sample pdf and, if applicable, the Russian Roulette continuation probability.</li>
 	</ol>
 
-	<p><b>Example Renderings with Global Illumination:</b> we provide a few example images rendered with global (direct and indirect) illumination, using 1024 samples per pixel:</p>
+	<p><b>Example Renderings with Global Illumination:</b> we provide a couple example images rendered with global (direct and indirect) illumination, using 1024 samples per pixel:</p>
 
 	<div align="middle">
 		<table style="width: 100%">
 		  <tr align="center">
 			<td>
-			  <img src="images/p4_ex_bunny.png" align="middle" width="500vw" />
+			  <img src="images/p4_ex_bunny.png" align="middle" width="400vw" />
 			  <figcaption><code>CBbunny.dae</code></figcaption>
 			</td>
 			<td>
-			  <img src="images/p4_ex_banana.png" align="middle" width="500vw" />
+			  <img src="images/p4_ex_banana.png" align="middle" width="400vw" />
 			  <figcaption><code>banana.dae</code></figcaption>
 			</td>
-			<td>
-			  <img src="images/p4_ex_walle.png" align="middle" width="500vw" />
+			<!-- <td>
+			  <img src="images/p4_ex_walle.png" align="middle" width="300vw" />
 			  <figcaption><code>wall-e.dae</code></figcaption>
-			</td>
+			</td> -->
 		</table>
 	  </div>
 
@@ -501,11 +501,11 @@ return L_out;
 		<table style="width: 100%">
 		  <tr align="center">
 			<td>
-			  <img src="images/p4_cbspheres_direct.png" align="middle" width="500vw" />
+			  <img src="images/p4_cbspheres_direct.png" align="middle" width="400vw" />
 			  <figcaption>Rendering of <code>CBspheres_lambertian.dae</code> with only <b>direct</b> lighting. </figcaption>
 			</td>
 			<td>
-			  <img src="images/p4_cbspheres_indirect.png" align="middle" width="500vw" />
+			  <img src="images/p4_cbspheres_indirect.png" align="middle" width="400vw" />
 			  <figcaption>Rendering of <code>CBspheres_lambertian.dae</code> with only <b>indirect</b> lighting. </figcaption>
 			</td>
 		</table>
@@ -521,31 +521,31 @@ return L_out;
 	<table style="width: 100%">
 	  <tr align="center">
 		<td>
-		  <img src="images/CBbunny_nobounce_m0.png" align="middle" width="500vw" />
+		  <img src="images/CBbunny_nobounce_m0.png" align="middle" width="150vw" />
 		  <figcaption><code>m=0</code></figcaption>
 		</td>
 		<td>
-			<img src="images/CBbunny_nobounce_m1.png" align="middle" width="500vw" />
+			<img src="images/CBbunny_nobounce_m1.png" align="middle" width="150vw" />
 			<figcaption><code>m=1</code></figcaption>
 		  </td>
 		  <td>
-			<img src="images/CBbunny_nobounce_m2.png" align="middle" width="500vw" />
+			<img src="images/CBbunny_nobounce_m2.png" align="middle" width="150vw" />
 			<figcaption><code>m=2</code></figcaption>
 		  </td>
 		  <td>
-			<img src="images/CBbunny_nobounce_m2.png" align="middle" width="500vw" />
+			<img src="images/CBbunny_nobounce_m2.png" align="middle" width="150vw" />
 			<figcaption><code>m=2</code></figcaption>
 		  </td>
 		  <td>
-			<img src="images/CBbunny_nobounce_m3.png" align="middle" width="500vw" />
+			<img src="images/CBbunny_nobounce_m3.png" align="middle" width="150vw" />
 			<figcaption><code>m=3</code></figcaption>
 		  </td>
 		  <td>
-			<img src="images/CBbunny_nobounce_m4.png" align="middle" width="500vw" />
+			<img src="images/CBbunny_nobounce_m4.png" align="middle" width="150vw" />
 			<figcaption><code>m=4</code></figcaption>
 		  </td>
 		  <td>
-			<img src="images/CBbunny_nobounce_m5.png" align="middle" width="500vw" />
+			<img src="images/CBbunny_nobounce_m5.png" align="middle" width="150vw" />
 			<figcaption><code>m=5</code></figcaption>
 		  </td>
 	</table>
@@ -556,31 +556,31 @@ return L_out;
 	<table style="width: 100%">
 	  <tr align="center">
 		<td>
-		  <img src="images/CBbunny_bounce_m0.png" align="middle" width="500vw" />
+		  <img src="images/CBbunny_bounce_m0.png" align="middle" width="150vw" />
 		  <figcaption><code>m=0</code></figcaption>
 		</td>
 		<td>
-			<img src="images/CBbunny_bounce_m1.png" align="middle" width="500vw" />
+			<img src="images/CBbunny_bounce_m1.png" align="middle" width="150vw" />
 			<figcaption><code>m=1</code></figcaption>
 		  </td>
 		  <td>
-			<img src="images/CBbunny_bounce_m2.png" align="middle" width="500vw" />
+			<img src="images/CBbunny_bounce_m2.png" align="middle" width="150vw" />
 			<figcaption><code>m=2</code></figcaption>
 		  </td>
 		  <td>
-			<img src="images/CBbunny_bounce_m2.png" align="middle" width="500vw" />
+			<img src="images/CBbunny_bounce_m2.png" align="middle" width="150vw" />
 			<figcaption><code>m=2</code></figcaption>
 		  </td>
 		  <td>
-			<img src="images/CBbunny_bounce_m3.png" align="middle" width="500vw" />
+			<img src="images/CBbunny_bounce_m3.png" align="middle" width="150vw" />
 			<figcaption><code>m=3</code></figcaption>
 		  </td>
 		  <td>
-			<img src="images/CBbunny_bounce_m4.png" align="middle" width="500vw" />
+			<img src="images/CBbunny_bounce_m4.png" align="middle" width="150vw" />
 			<figcaption><code>m=4</code></figcaption>
 		  </td>
 		  <td>
-			<img src="images/CBbunny_bounce_m5.png" align="middle" width="500vw" />
+			<img src="images/CBbunny_bounce_m5.png" align="middle" width="150vw" />
 			<figcaption><code>m=5</code></figcaption>
 		  </td>
 	</table>
@@ -591,31 +591,31 @@ return L_out;
 	<table style="width: 100%">
 	  <tr align="center">
 		<td>
-		  <img src="images/CBbunny_rr_m0.png" align="middle" width="500vw" />
+		  <img src="images/CBbunny_rr_m0.png" align="middle" width="150vw" />
 		  <figcaption><code>m=0</code></figcaption>
 		</td>
 		<td>
-			<img src="images/CBbunny_rr_m1.png" align="middle" width="500vw" />
+			<img src="images/CBbunny_rr_m1.png" align="middle" width="150vw" />
 			<figcaption><code>m=1</code></figcaption>
 		  </td>
 		  <td>
-			<img src="images/CBbunny_rr_m2.png" align="middle" width="500vw" />
+			<img src="images/CBbunny_rr_m2.png" align="middle" width="150vw" />
 			<figcaption><code>m=2</code></figcaption>
 		  </td>
 		  <td>
-			<img src="images/CBbunny_rr_m2.png" align="middle" width="500vw" />
+			<img src="images/CBbunny_rr_m2.png" align="middle" width="150vw" />
 			<figcaption><code>m=2</code></figcaption>
 		  </td>
 		  <td>
-			<img src="images/CBbunny_rr_m3.png" align="middle" width="500vw" />
+			<img src="images/CBbunny_rr_m3.png" align="middle" width="150vw" />
 			<figcaption><code>m=3</code></figcaption>
 		  </td>
 		  <td>
-			<img src="images/CBbunny_rr_m4.png" align="middle" width="500vw" />
+			<img src="images/CBbunny_rr_m4.png" align="middle" width="150vw" />
 			<figcaption><code>m=4</code></figcaption>
 		  </td>
 		  <td>
-			<img src="images/CBbunny_rr_m5.png" align="middle" width="500vw" />
+			<img src="images/CBbunny_rr_m5.png" align="middle" width="150vw" />
 			<figcaption><code>m=5</code></figcaption>
 		  </td>
 	</table>
@@ -627,31 +627,31 @@ return L_out;
 	<table style="width: 100%">
 	  <tr align="center">
 		<td>
-		  <img src="images/dragon_s1_rate.png" align="middle" width="500vw" />
+		  <img src="images/dragon_s1_rate.png" align="middle" width="150vw" />
 		  <figcaption><code>s=1</code></figcaption>
 		</td>
 		<td>
-			<img src="images/dragon_s2_rate.png" align="middle" width="500vw" />
+			<img src="images/dragon_s2_rate.png" align="middle" width="150vw" />
 			<figcaption><code>s=2</code></figcaption>
 		  </td>
 		  <td>
-			<img src="images/dragon_s4_rate.png" align="middle" width="500vw" />
+			<img src="images/dragon_s4_rate.png" align="middle" width="150vw" />
 			<figcaption><code>s=4</code></figcaption>
 		  </td>
 		  <td>
-			<img src="images/dragon_s8_rate.png" align="middle" width="500vw" />
+			<img src="images/dragon_s8_rate.png" align="middle" width="150vw" />
 			<figcaption><code>s=8</code></figcaption>
 		  </td>
 		  <td>
-			<img src="images/dragon_s16_rate.png" align="middle" width="500vw" />
+			<img src="images/dragon_s16_rate.png" align="middle" width="150vw" />
 			<figcaption><code>s=16</code></figcaption>
 		  </td>
 		  <td>
-			<img src="images/dragon_s64_rate.png" align="middle" width="500vw" />
+			<img src="images/dragon_s64_rate.png" align="middle" width="150vw" />
 			<figcaption><code>s=64</code></figcaption>
 		  </td>
 		  <td>
-			<img src="images/dragon_s1024_rate.png" align="middle" width="500vw" />
+			<img src="images/dragon_s1024_rate.png" align="middle" width="150vw" />
 			<figcaption><code>s=1024</code></figcaption>
 		  </td>
 	</table>
@@ -699,11 +699,11 @@ if (batch_size % samplesPerBatch == 0) {
 		<table style="width: 100%">
 		  <tr align="center">
 			<td>
-			  <img src="images/bunny.png" align="middle" width="500vw" />
+			  <img src="images/bunny.png" align="middle" width="400vw" />
 			  <figcaption><code>CBbunny.dae</code> noise free rendered result. </figcaption>
 			</td>
 			<td>
-			  <img src="images/bunny_rate.png" align="middle" width="500vw" />
+			  <img src="images/bunny_rate.png" align="middle" width="400vw" />
 			  <figcaption><code>CBbunny.dae</code> heatmap showing samples taken per pixel. </figcaption>
 			</td>
 		</table>
