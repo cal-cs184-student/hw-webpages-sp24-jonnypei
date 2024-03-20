@@ -466,9 +466,198 @@ return L_out;
 	<h2 align="middle">Part 4: Global Illumination</h1>
 	<hr />
 
-	<p>stuff</p>
+	<p><b>Global Illumination Implementation:</b> the crux of global lighting in <code>at_least_one_bounce_radiance()</code> is the added support of indirect lighting, in which we accumulate radiance from multiple bounces of light. Our implementation consists of the following steps:</p>
+	<ol>
+		<li>Initialize the radiance of <code>L_out</code> to include direct illumination via <code>one_bounce_radiance()</code>.</li>
+		<li>If the ray's depth (originally <code>max_ray_depth</code>) is less than or equal to 1, we terminate and return <code>L_out</code>.</li>
+		<li>If using Russian Roulette, we terminate and return <code>L_out</code> with a certain termination probability. We chose a reasonable termination probability of 0.4.</li>
+		<li>If we don't terminate, then we cast the next "bounce" of the ray <code>next_r</code> by sampling a direction from the BSDF via <code>isect.bsdf->sample_f()</code>, with decremented depth <code>r.depth - 1</code>.</li>
+		<li>If <code>next_r</code> intersects the <code>bvh</code>, we compute its radiance by recursively calling <code>at_least_one_bounce_radiance</code> on it. Then, we accumulate this indirect (via bouncing) light by scaling it with the current intersection reflectance (from step 4) and the direction of <code>next_r</code>. Finally, we make sure to divide by the BSDF sample pdf and, if applicable, the Russian Roulette continuation probability.</li>
+	</ol>
 
-	<hr />
+	<p><b>Example Renderings with Global Illumination:</b> we provide a few example images rendered with global (direct and indirect) illumination, using 1024 samples per pixel:</p>
+
+	<div align="middle">
+		<table style="width: 100%">
+		  <tr align="center">
+			<td>
+			  <img src="images/p4_ex_bunny.png" align="middle" width="500vw" />
+			  <figcaption><code>CBbunny.dae</code></figcaption>
+			</td>
+			<td>
+			  <img src="images/p4_ex_banana.png" align="middle" width="500vw" />
+			  <figcaption><code>banana.dae</code></figcaption>
+			</td>
+			<td>
+			  <img src="images/p4_ex_walle.png" align="middle" width="500vw" />
+			  <figcaption><code>wall-e.dae</code></figcaption>
+			</td>
+		</table>
+	  </div>
+
+	<p><b>Visualizing Direct vs. Indirect Illumination:</b> to visualize the separate contributions of direct and indirect lighting to global illumination, we provide renderings of <code>CBspheres_lambertian.dae</code> with only direct illumination (left) and only indirect illumination (right). Both renders use 1024 samples per pixel, 16 samples per area light, and a max ray depth of 5.</p>
+
+	<div align="middle">
+		<table style="width: 100%">
+		  <tr align="center">
+			<td>
+			  <img src="images/p4_cbspheres_direct.png" align="middle" width="500vw" />
+			  <figcaption>Rendering of <code>CBspheres_lambertian.dae</code> with only <b>direct</b> lighting. </figcaption>
+			</td>
+			<td>
+			  <img src="images/p4_cbspheres_indirect.png" align="middle" width="500vw" />
+			  <figcaption>Rendering of <code>CBspheres_lambertian.dae</code> with only <b>indirect</b> lighting. </figcaption>
+			</td>
+		</table>
+	  </div>
+	<p>
+	Notice that parts of the scene that could only be lit by indirect light bounces (e.g. the ceiling and bottoms of the spheres) are lit up in the indirect rendering.
+</p>
+
+<p><b>Rendering Light Bounces:</b> we provide rendered views of <code>CBbunny.dae</code> with <code>max_ray_depth</code> set to 0, 1, 2, 3, 4, and 5, while varying <code>isAccumBounces</code>. Here, we aim to visualize how each successive light bounce behaves and contributes to the global illumination. All renders below use 1024 samples per pixel and 32 samples per area light. </p>
+
+<p><code>isAccumBounces=false</code> (i.e. individual bounce):</p>
+<div align="middle">
+	<table style="width: 100%">
+	  <tr align="center">
+		<td>
+		  <img src="images/CBbunny_nobounce_m0.png" align="middle" width="500vw" />
+		  <figcaption><code>m=0</code></figcaption>
+		</td>
+		<td>
+			<img src="images/CBbunny_nobounce_m1.png" align="middle" width="500vw" />
+			<figcaption><code>m=1</code></figcaption>
+		  </td>
+		  <td>
+			<img src="images/CBbunny_nobounce_m2.png" align="middle" width="500vw" />
+			<figcaption><code>m=2</code></figcaption>
+		  </td>
+		  <td>
+			<img src="images/CBbunny_nobounce_m2.png" align="middle" width="500vw" />
+			<figcaption><code>m=2</code></figcaption>
+		  </td>
+		  <td>
+			<img src="images/CBbunny_nobounce_m3.png" align="middle" width="500vw" />
+			<figcaption><code>m=3</code></figcaption>
+		  </td>
+		  <td>
+			<img src="images/CBbunny_nobounce_m4.png" align="middle" width="500vw" />
+			<figcaption><code>m=4</code></figcaption>
+		  </td>
+		  <td>
+			<img src="images/CBbunny_nobounce_m5.png" align="middle" width="500vw" />
+			<figcaption><code>m=5</code></figcaption>
+		  </td>
+	</table>
+  </div>
+
+  <p><code>isAccumBounces=true</code> (i.e. accumulates bounces):</p>
+  <div align="middle">
+	<table style="width: 100%">
+	  <tr align="center">
+		<td>
+		  <img src="images/CBbunny_bounce_m0.png" align="middle" width="500vw" />
+		  <figcaption><code>m=0</code></figcaption>
+		</td>
+		<td>
+			<img src="images/CBbunny_bounce_m1.png" align="middle" width="500vw" />
+			<figcaption><code>m=1</code></figcaption>
+		  </td>
+		  <td>
+			<img src="images/CBbunny_bounce_m2.png" align="middle" width="500vw" />
+			<figcaption><code>m=2</code></figcaption>
+		  </td>
+		  <td>
+			<img src="images/CBbunny_bounce_m2.png" align="middle" width="500vw" />
+			<figcaption><code>m=2</code></figcaption>
+		  </td>
+		  <td>
+			<img src="images/CBbunny_bounce_m3.png" align="middle" width="500vw" />
+			<figcaption><code>m=3</code></figcaption>
+		  </td>
+		  <td>
+			<img src="images/CBbunny_bounce_m4.png" align="middle" width="500vw" />
+			<figcaption><code>m=4</code></figcaption>
+		  </td>
+		  <td>
+			<img src="images/CBbunny_bounce_m5.png" align="middle" width="500vw" />
+			<figcaption><code>m=5</code></figcaption>
+		  </td>
+	</table>
+  </div>
+<p><b>Global Illumination with Russian Roulette:</b> we now display renderings of <code>CBbunny.dae</code> using Russian Roulette, with <code>max_ray_depth</code> set to 0, 1, 2, 3, 4, and 5. All renders below use 1024 samples per pixel and 32 samples per area light.</p>
+
+<div align="middle">
+	<table style="width: 100%">
+	  <tr align="center">
+		<td>
+		  <img src="images/CBbunny_rr_m0.png" align="middle" width="500vw" />
+		  <figcaption><code>m=0</code></figcaption>
+		</td>
+		<td>
+			<img src="images/CBbunny_rr_m1.png" align="middle" width="500vw" />
+			<figcaption><code>m=1</code></figcaption>
+		  </td>
+		  <td>
+			<img src="images/CBbunny_rr_m2.png" align="middle" width="500vw" />
+			<figcaption><code>m=2</code></figcaption>
+		  </td>
+		  <td>
+			<img src="images/CBbunny_rr_m2.png" align="middle" width="500vw" />
+			<figcaption><code>m=2</code></figcaption>
+		  </td>
+		  <td>
+			<img src="images/CBbunny_rr_m3.png" align="middle" width="500vw" />
+			<figcaption><code>m=3</code></figcaption>
+		  </td>
+		  <td>
+			<img src="images/CBbunny_rr_m4.png" align="middle" width="500vw" />
+			<figcaption><code>m=4</code></figcaption>
+		  </td>
+		  <td>
+			<img src="images/CBbunny_rr_m5.png" align="middle" width="500vw" />
+			<figcaption><code>m=5</code></figcaption>
+		  </td>
+	</table>
+  </div>
+
+<p><b>Varying Sample-per-Pixel:</b> we display rendered views of <code>CBdragon.dae</code> with sample-per-pixel rates of 1, 2, 4, 8, 16, 64, and 1024. All renders below use 16 samples per area light, and a max ray depth of 4.</p>
+
+<div align="middle">
+	<table style="width: 100%">
+	  <tr align="center">
+		<td>
+		  <img src="images/dragon_s1_rate.png" align="middle" width="500vw" />
+		  <figcaption><code>s=1</code></figcaption>
+		</td>
+		<td>
+			<img src="images/dragon_s2_rate.png" align="middle" width="500vw" />
+			<figcaption><code>s=2</code></figcaption>
+		  </td>
+		  <td>
+			<img src="images/dragon_s4_rate.png" align="middle" width="500vw" />
+			<figcaption><code>s=4</code></figcaption>
+		  </td>
+		  <td>
+			<img src="images/dragon_s8_rate.png" align="middle" width="500vw" />
+			<figcaption><code>s=8</code></figcaption>
+		  </td>
+		  <td>
+			<img src="images/dragon_s16_rate.png" align="middle" width="500vw" />
+			<figcaption><code>s=16</code></figcaption>
+		  </td>
+		  <td>
+			<img src="images/dragon_s64_rate.png" align="middle" width="500vw" />
+			<figcaption><code>s=64</code></figcaption>
+		  </td>
+		  <td>
+			<img src="images/dragon_s1024_rate.png" align="middle" width="500vw" />
+			<figcaption><code>s=1024</code></figcaption>
+		  </td>
+	</table>
+  </div>
+
+<hr />
 	<h2 align="middle">Part 5: Adaptive Sampling</h1>
 	<hr />
 
