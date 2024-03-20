@@ -435,12 +435,12 @@ return L_out;
 		  <br>
 
 		  Here, it is clear that the noise drastically reduces and the number of samples taken per light source increases. Which makes sense since the random samples will converge to their true values better over the course of many samples. 
-		  It is also important to note that the starting render at l=1 performs quite well still, due to the use of lighting sampling rather than random sampling. 
+		  It is also important to note that the starting render at <code>l=1</code> performs quite well still, due to the use of lighting sampling rather than random sampling. 
 		  <br> <br>
 
 		  <b>Uniform vs Importance Sampling: </b> <br>
 		  As generally expected, the noise when performing importance sampling is drastically lower than when performing uniform hemisphere 
-		  sampling. This can be noticed in the CBbunny.dae renders above with (s=16, l=8). Even though both renders have the same number of samples, the 
+		  sampling. This can be noticed in the CBbunny.dae renders above with (<code>s=16</code>, <code>l=8</code>). Even though both renders have the same number of samples, the 
 		  use of importance sampling allows for the pixel to converge to the true luminance much quicker, and reduces the pixelated variance present. Another
 		  interesting comparision can be seen below.
 		
@@ -449,7 +449,7 @@ return L_out;
 			  <tr align="center">
 				<td>
 				  <img src="images/bunny_1_1.png" align="middle" width="300vw" />
-				  <figcaption>CBbunny.dae with importance sampling (s = 1, l = 1).</figcaption>
+				  <figcaption><code>CBbunny.dae</code> with importance sampling (<code>s=1</code>, <code>l=1</code>).</figcaption>
 				</td>
 			  </tr>
 			</table>
