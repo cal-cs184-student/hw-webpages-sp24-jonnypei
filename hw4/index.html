@@ -78,6 +78,10 @@
   <a href="https://cs184.eecs.berkeley.edu/sp23/docs/proj4-part-1">
   <h2 align="middle">Part 1: Masses and springs</h2>
   </a>
+  <p>
+	Implementation Overview: First, the pointmasses were created by looping a nested for loop, setting the y value to 1 or z value to <code>1.0 / (rand() % 2000 + 999)</code> depending on orientation.
+	Each point was also checked for pinning during this process. Then, 3 individual loops went through the points and <code>emplace_back</code> was used to add each of structural, shearing, and bending springs to the cloth.
+</p>
     <blockquote><b>
       Take some screenshots of <i>scene/pinned2.json</i> from a viewing angle where you can clearly see the cloth wireframe 
       to show the structure of your point masses and springs. 
@@ -87,14 +91,14 @@
       <table style="width:100%">
         <tr align="center">
           <td>
-            <img src="images/t1-zoomed-in_p2.png" align="middle" width="300vw" />
+            <img src="images/p1_start_fall.png" align="middle" width="300vw" />
           </td>
           <td>
-            <img src="images/t1-init_p2.png" align="middle" width="300vw" />
-            <figcaption>Initial configuration ($\text{ks} = 5,000$)</figcaption>
+            <img src="images/p1_mid_fall.png" align="middle" width="300vw" />
+            <figcaption>Initial configuration \(ks = 5000\)</figcaption>
           </td>
           <td>
-            <img src="images/t1-zoomed-out_p2.png" align="middle" width="300vw" />
+            <img src="images/p1_at_rest.png" align="middle" width="300vw" />
           </td>
           <td>
         </tr>
@@ -107,29 +111,25 @@
       (2) with only shearing constraints, and (3) with all constraints.
     </b></blockquote>
 
-    <div align="middle">
-      <table style="width:100%">
-        <tr align="center">
-          <td>
-            <img src="images/t1-no_shear.png" align="middle" width="500px" />
-            <figcaption>No shearing constraints</figcaption>
-          </td>
-        </tr>
-        <tr align="center">
-          <td>
-            <img src="images/t1-only_shear.png" align="middle" width="500px" />
-            <figcaption>Only shearing constraints</figcaption>
-          </td>
-        </tr>
-        <tr align="center">
-          <td>
-            <img src="images/t1-all.png" align="middle" width="500px" />
-            <figcaption>All constraints</figcaption>
-          </td>
-        </tr>
-      </table>
-    </div>
-
+	<div align="middle">
+		<table style="width:100%">
+		  <tr align="center">
+			<td>
+			  <img src="images/p1_no_shear.png" align="middle" width="300vw" />
+			  <figcaption>No shearing constraints</figcaption>
+			</td>
+			<td>
+			  <img src="images/p1_only_shear.png" align="middle" width="300vw" />
+			  <figcaption>Only shearing constraints</figcaption>
+			</td>
+			<td>
+			  <img src="images/p1_all.png" align="middle" width="300vw" />
+			  <figcaption>All constraints</figcaption>
+			</td>
+			<td>
+		  </tr>
+		</table>
+	  </div>
 
 
   <a href="https://cs184.eecs.berkeley.edu/sp23/docs/proj4-part-2">
@@ -146,8 +146,44 @@
       </small>
     </b></blockquote>
 
+	<div align="middle">
+		<table style="width:100%">
+		  <tr align="center">
+			<td>
+			  <img src="images/p2_lowks_start.png" align="middle" width="400vw" />
+			  <figcaption>\(ks=1\) start phase</figcaption>
+			</td>
+			<td>
+			  <img src="images/p2_lowks_end.png" align="middle" width="400vw" />
+			  <figcaption>\(ks=1\) middle phase</figcaption>
+			</td>
+			<td>
+				<img src="images/p2_lowks_endend.png" align="middle" width="400vw" />
+				<figcaption>\(ks=1\) end phase</figcaption>
+			  </td>
+			<td>
+			  <img src="images/p2_highks_start.png" align="middle" width="400vw" />
+			  <figcaption>\(ks=100000\) start phase</figcaption>
+			</td>
+			<td>
+				<img src="images/p2_highks_end.png" align="middle" width="400vw" />
+				<figcaption>\(ks=100000\) middle phase</figcaption>
+			</td>
+			<td>
+				<img src="images/p2_highks_endend.png" align="middle" width="400vw" />
+				<figcaption>\(ks=100000\) end phase</figcaption>
+			</td>
+			<td>
+		  </tr>
+		</table>
+	  </div>
+
     <p>
-      TODO
+      When modifying ks, it appears a low ks has much more rippling and retains energy from the dropping much better than the cloth with high ks. 
+	  This difference is likely due to the fact that a higher spring constant force corrects and dampens the force of gravity, meaning the force dissipates much faster in the high ks simulation.
+	  In the low ks simulation, on the other hand, the force is retained better and ripples throughout the cloth, causing the waves and wrinkles in the cloth.
+	  Also, towards the start of the fall, the cloth with less ks appears to have its pointmasses in freefall more, most likely due to the lack of corrective force compared to the uniform "caving-in" motion of the high ks cloth.
+	  Both reach roughly the same end state, though the high ks simulation has a less noticable x-shaped diagonal across the cloth. 
     </p>
 
 
@@ -157,8 +193,41 @@
       </small>
     </b></blockquote>
 
+	<div align="middle">
+		<table style="width:100%">
+		  <tr align="center">
+			<td>
+			  <img src="images/p2_lowdensity_start.png" align="middle" width="400vw" />
+			  <figcaption>\(density=1\) start phase</figcaption>
+			</td>
+			<td>
+			  <img src="images/p2_lowdensity_middle.png" align="middle" width="400vw" />
+			  <figcaption>\(density=1\) middle phase</figcaption>
+			</td>
+			<td>
+				<img src="images/p2_lowdensity_end.png" align="middle" width="400vw" />
+				<figcaption>\(density=1\) end phase</figcaption>
+			  </td>
+			<td>
+			  <img src="images/p2_highdensity_start.png" align="middle" width="400vw" />
+			  <figcaption>\(density=100000\) start phase</figcaption>
+			</td>
+			<td>
+				<img src="images/p2_highdensity_middle.png" align="middle" width="400vw" />
+				<figcaption>\(density=100000\) middle phase</figcaption>
+			</td>
+			<td>
+				<img src="images/p2_high_density_end.png" align="middle" width="400vw" />
+				<figcaption>\(density=100000\) end phase</figcaption>
+			</td>
+			<td>
+		  </tr>
+		</table>
+	  </div>
+
     <p>
-      TODO
+      From the images above, it appears that \(density\) has a similar relationship to \(ks\), just inverted. This generally makes sense, since a hgiher density in the point masses would mean they gain more gravitational force when descending, making it harder for the dampening force from the springs to take effect and zero-out the rippling effect. 
+	  The start, middle, and end states all appear to behave similarily. That said, <code>pinned4.json</code> is probably not the most indicative of the difference between the two. Since the only force applied is downwards, the simulations look similar. However, \(ks\) resists all types of change in the cloth, both vertical and horizontal, while \(density\) can either increase or decrease the velocity of pointmasses.  For example, if the cloth was swinging, the one with higher \(ks\) would resist the swing while the one with higher \(density\) would shake more violently. 
     </p>
     
     
@@ -168,37 +237,43 @@
       </small>
     </b></blockquote>
 
+	<div align="middle">
+		<table style="width:100%">
+		  <tr align="center">
+			<td>
+			  <img src="images/p2_lowdamp_start.png" align="middle" width="400vw" />
+			  <figcaption>\(dampening=0\) start phase</figcaption>
+			</td>
+			<td>
+			  <img src="images/p2_lowdamp_middle.png" align="middle" width="400vw" />
+			  <figcaption>\(dampening=0\) middle phase</figcaption>
+			</td>
+			<td>
+				<img src="images/p2_lowdamp_end.png" align="middle" width="400vw" />
+				<figcaption>\(dampening=0\) end phase</figcaption>
+			  </td>
+			<td>
+			  <img src="images/p2_highdamp_start.png" align="middle" width="400vw" />
+			  <figcaption>\(dampening=1\) start phase</figcaption>
+			</td>
+			<td>
+				<img src="images/p2_highdamp_middle.png" align="middle" width="400vw" />
+				<figcaption>\(dampening=1\) middle phase</figcaption>
+			</td>
+			<td>
+				<img src="images/p2_highdamp_end.png" align="middle" width="400vw" />
+				<figcaption>\(dampening=1\) end phase</figcaption>
+			</td>
+			<td>
+		  </tr>
+		</table>
+	  </div>
+
     <p>
-      TODO
+      In our mathematical implementation of velocity and positional updates with Verlet Integration, \(dampening\) is used to simulate the loss of energy due to heat, air resistance, etc. 
+	  This means that when the \(dampening\) parameter is set to 0, the cloth never looses energy, which is noticable in how the cloth, even in the end state, still shakes around from the structural spring force. Since the energy never dissipates, it continues to shake forever. In comparison, for dampening = 1, no velocity is ever built up since it is always zero'd out, leading to a slow, roughly-linear speed fall into its end state. Also, the cloth never bounces with a perfect dampening since as soon as the upwards structural force matches the downwards gravitational force, the cloth is at equilibrium. 
     </p>
 
-
-    <blockquote><b>
-      <small>
-      For each of the above, observe any noticeable differences in the cloth compared to the default parameters 
-      and show us some screenshots of those interesting differences and describe when they occur.
-      </small>
-    </b></blockquote>
-  
-    <div align="middle">
-      <table style="width:100%">
-        <tr align="center">
-          <td>
-            <img src="images/t2-interesting-difference1.png" align="middle" width="400vw" />
-            <figcaption>Default Parameters</figcaption>
-          </td>
-          <td>
-            <img src="images/t2-interesting-difference2.png" align="middle" width="400vw" />
-            <figcaption>Default Parameters</figcaption>
-          </td>
-          <td>
-        </tr>
-      </table>
-    </div>
-  
-    <p>
-      TODO
-    </p>
 
 
     <blockquote><b>
@@ -207,7 +282,7 @@
     </b></blockquote>
 
     <div align="middle">
-      <img src="images/t2-shaded-cloth-resting-p4.png" align="middle" width="100%" />
+      <img src="images/p2_default.png" align="middle" width="100%" />
     </div>
 
 
@@ -215,6 +290,15 @@
   <a href="https://cs184.eecs.berkeley.edu/sp23/docs/proj4-part-3">
   <h2 align="middle">Part 3: Handling collisions with other objects</h2>
   </a>
+
+  <p>
+	Implementation Overview: Both collision types were implemented using the ray-sphere intersection equation or ray-plane intersection equation where the ray 
+	is the <code>pm.last_position</code> to <code>pm.position.</code> Intersections were detected for the sphere if the current position was within the radius as follows: <code>abs((pm.position - origin).norm()) <= radius</code>.
+	For planes, the <code>last_position</code> and <code>position</code> parameters were used to check if it flipped from one side of the plane to the other: <code>(dot(pm.last_position,normal) >= 0 && dot(pm.position,normal) <= 0) || (dot(pm.last_position,normal) <= 0 && dot(pm.position,normal) >= 0).
+	</code> Finally, the ray mentioned previously was used to calculate the offset position, and the frictional coefficient \(f\) was multiplied with the corrective vector. 
+</p>
+
+
     <blockquote><b>
       Show us screenshots of your shaded cloth from <i>scene/sphere.json</i> in its final resting state 
       on the sphere using the default <code>ks = 5000</code> as well as with <code>ks = 500</code> and <code>ks = 50000</code>. 
@@ -224,16 +308,16 @@
       <table style="width:100%">
         <tr align="center">
           <td>
-            <img src="images/t3-ks-500.png" align="middle" width="300vw" />
-            <figcaption>$\text{ks} = 500$</figcaption>
+            <img src="images/p3_500.png" align="middle" width="300vw" />
+            <figcaption>\(ks = 500\)</figcaption>
           </td>
           <td>
-            <img src="images/t3-ks-5000.png" align="middle" width="300vw" />
-            <figcaption>Initial configuration ($\text{ks} = 5,000$)</figcaption>
+            <img src="images/p3_5000.png" align="middle" width="300vw" />
+            <figcaption>\(ks = 5000\)</figcaption>
           </td>
           <td>
-            <img src="images/t3-ks-50000.png" align="middle" width="300vw" />
-            <figcaption>$\text{ks} = 50,000$</figcaption>
+            <img src="images/p3_50000.png" align="middle" width="300vw" />
+            <figcaption>\(ks = 50000\)</figcaption>
           </td>
           <td>
         </tr>
@@ -242,12 +326,11 @@
 
 
     <blockquote><b>
-      <small>Describe the differences in the results.</small>
+      <small>In this simulation, \(ks\) controls the "rigidity" of the cloth or how resistant it is to the pulling force of gravity and how well it 
+		maintains its structure. Thus, at low \(ks\), the cloth bends much more, and the edges are droopier and flare out less as a result. As \(ks\) increases, the cloth becomes more resistant to the "drooping" and flares out more since the structural springs are working harder. 
+	This is especially pronounced in \(ks = 50000\), where the edges come away from the sphere much more. </small>
     </b></blockquote>
 
-    <p>
-      TODO
-    </p>
 
 
     <blockquote><b>
@@ -257,7 +340,7 @@
     </b></blockquote>
 
     <div align="middle">
-      <img src="images/t3-shaded-cloth-at-rest.png" align="middle" width="100%" />
+      <img src="images/p3_plane.png" align="middle" width="100%" />
     </div>
 
 
