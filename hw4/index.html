@@ -443,28 +443,35 @@
       <img src="images/blinn-phong-equation.png" align="middle" width="100%" />
     </div>
 
+    <p>
+      where \(k_a, k_d, k_s\) are the ambient, diffuse, and specular coefficients; \(I, \ell, r = \|\ell\|\) are the intensity, ray displacement, and distance to the light source; \(n\) is the surface normal at the vertex; \(I_a\) is the ambient light intensity; \(h\) is the half-vector (i.e. bisector) of \(\ell, n\); and \(p\) is the specular power. 
+    </p>
+
+    <p>The first term represents <b>ambient light</b>, or light that would hypothetically arrive after more than one bounce. The second term represents <b>diffuse light</b>, which is a uniform hemispherical reflection. The final (and third) term represents <b>specular light</b>, approximating light reflected off of the scene in a mirror-like way.</p>
+
+    <p>For our shading, we used the following constant values: \(k_a = 0.2, k_d = 1, k_s = 0.8, I_a = 0.8, p = 20\).</p>
 
 
     <div align="middle">
       <table style="width:100%">
         <tr align="center">
           <td>
-              <img src="images/t5-blinn-phong-ambient.png" align="middle" width="400px" />
+              <img src="images/p5_phong_ambient_2.png" align="middle" width="400px" />
               <figcaption>Ambient component only</figcaption>
               
           </td>
           <td>
-              <img src="images/t5-blinn-phong-diffuse.png" align="middle" width="400px" />
+              <img src="images/p5_phong_diffuse_2.png" align="middle" width="400px" />
               <figcaption>Diffuse component only</figcaption>
           </td>
         </tr>
         <tr align="center">
           <td>
-              <img src="images/t5-blinn-phong-specular.png" align="middle" width="400px" />
+              <img src="images/p5_phong_specular_2.png" align="middle" width="400px" />
               <figcaption>Specular component only</figcaption>
           </td>
           <td>
-              <img src="images/t5-blinn-phong-all.png" align="middle" width="400px" />
+              <img src="images/p5_phong_full.png" align="middle" width="400px" />
               <figcaption>Complete Blinn-Phong model</figcaption>
           </td>
         </tr>
@@ -477,7 +484,19 @@
     </b></blockquote>
 
     <div align="middle">
-      <img src="images/t5-custom-texture.png" align="middle" width="100%" />
+      <table style="width:100%">
+        <tr align="center">
+          <td>
+            <img src="images/wood.png" align="middle" width="400vw" />
+            <figcaption>Custom Texture Image (Wood!)</figcaption>
+          </td>
+          <td>
+            <img src="images/p5_texture_2.png" align="middle" width="400vw" />
+            <figcaption>Custom Texture Mapped Onto Sphere and Cloth</figcaption>
+          </td>
+          <td>
+        </tr>
+      </table>
     </div>
 
 
@@ -491,36 +510,69 @@
     Compare how your the two shaders react to the sphere by changing the sphere mesh's coarseness by using <code>-o 16 -a 16</code> and then <code>-o 128 -a 128</code>.
     </b></blockquote>
 
+    <p>All shaded figures below are produced using the setting <code>-o 128 -a 128</code>.</p>
+    
     <div align="middle">
       <table style="width:100%">
         <tr align="center">
           <td>
-            <img src="images/t5-bump-mapping-cloth.png" align="middle" width="400vw" />
+            <img src="images/p5_bump_cloth.png" align="middle" width="400vw" />
             <figcaption>Bump Mapping on the Cloth</figcaption>
           </td>
           <td>
-            <img src="images/t5-bump-mapping-sphere.png" align="middle" width="400vw" />
+            <img src="images/p5_bump_sphere.png" align="middle" width="400vw" />
             <figcaption>Bump Mapping on the Sphere</figcaption>
           </td>
           <td>
         </tr>
         <tr align="center">
           <td>
-            <img src="images/t5-displacement-mapping-sphere.png" align="middle" width="400vw" />
-            <figcaption>Displacement Mapping on the Sphere</figcaption>
+            <img src="images/p5_displacement_cloth.png" align="middle" width="400vw" />
+            <figcaption>Displacement Mapping on the Cloth</figcaption>
           </td>
           <td>
-            <img src="images/t5-displacement-mapping-sphere-2.png" align="middle" width="400vw" />
-            <figcaption>Displacement Mapping on the Sphere (coarser mesh)</figcaption>
+            <img src="images/p5_displacement_sphere.png" align="middle" width="400vw" />
+            <figcaption>Displacement Mapping on the Sphere</figcaption>
           </td>
           <td>
         </tr>
       </table>
     </div>
 
+    <p>Both bump mapping and displacement mapping display the texture on the cloth's surface. However, bump mapping doesn't change the texture of cloth, so the resulting shading looks a bit "flat" and unrealistic. On the other hand, displacement mapping modifies the cloth vertices according to their texture height, which makes the texture shading more realistic.</p>
+
     <p>
-      TODO
+      Note (again) that the above figures are rendered at \(128 \times 128\) resolution. Let's compare those above results to those below, which are produced using the setting <code>-o 16 -a 16</code> (i.e. \(16 \times 16\) resolution).
     </p>
+
+    <div align="middle">
+      <table style="width:100%">
+        <tr align="center">
+          <td>
+            <img src="images/p5_bump_cloth_coarse.png" align="middle" width="400vw" />
+            <figcaption>Bump Mapping on the Cloth (Coarse)</figcaption>
+          </td>
+          <td>
+            <img src="images/p5_bump_sphere_coarse.png" align="middle" width="400vw" />
+            <figcaption>Bump Mapping on the Sphere (Coarse)</figcaption>
+          </td>
+          <td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="images/p5_displacement_cloth_coarse.png" align="middle" width="400vw" />
+            <figcaption>Displacement Mapping on the Cloth (Coarse)</figcaption>
+          </td>
+          <td>
+            <img src="images/p5_displacement_sphere_coarse.png" align="middle" width="400vw" />
+            <figcaption>Displacement Mapping on the Sphere (Coarse)</figcaption>
+          </td>
+          <td>
+        </tr>
+      </table>
+    </div>
+
+    <p>We observe that the coarser renders (smaller resolution) have much smoother edges and texture fluctuations. This is explained by the lower resolution decreasing the number of vertices to transform.</p>
 
 
     <blockquote><b>
@@ -531,11 +583,11 @@
       <table style="width:100%">
         <tr align="center">
           <td>
-            <img src="images/t5-mirror-shader-cloth.png" align="middle" width="400vw" />
+            <img src="images/p5_mirror_2.png" align="middle" width="400vw" />
             <figcaption>Mirror Shader on the Cloth</figcaption>
           </td>
           <td>
-            <img src="images/t5-mirror-shader-sphere.png" align="middle" width="400vw" />
+            <img src="images/p5_mirror_1.png" align="middle" width="400vw" />
             <figcaption>Mirror Shader on the Sphere</figcaption>
           </td>
           <td>
@@ -543,39 +595,48 @@
       </table>
     </div>
 
-
     <blockquote><b>
     Explain what you did in your custom shader, if you made one.
     </b></blockquote>
 
     <p>
-      TODO
+      Our custom shader is a combination of displacement mapping and mirror shading. Note the visible texture contributed by the displacement mapping component.
     </p>
 
-
+    <div align="middle">
+      <table style="width:100%">
+        <tr align="center">
+          <td>
+            <img src="images/p5_mirror_2.png" align="middle" width="400vw" />
+            <figcaption>Mirror Shader on the Cloth</figcaption>
+          </td>
+          <td>
+            <img src="images/p5_mirror_1.png" align="middle" width="400vw" />
+            <figcaption>Mirror Shader on the Sphere</figcaption>
+          </td>
+          <td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="images/p5_custom_2.png" align="middle" width="400vw" />
+            <figcaption>Custom Shader on the Cloth</figcaption>
+          </td>
+          <td>
+            <img src="images/p5_custom_1.png" align="middle" width="400vw" />
+            <figcaption>Custom Shader on the Sphere</figcaption>
+          </td>
+          <td>
+        </tr>
+      </table>
+    </div>
 
   <h2 align="middle">Contributions</h2>
   <p>
-    Partner A worked on TODO.
+    Bill worked on the code and writeup for parts 1-3, as well as the wind implementation.
   </p>
-  <br />
   <p>
-    Partner B worked on TODO.
+    Jonny worked on the code and writeup for parts 4-5, as well as the custom shader.
   </p>
-
-
-
-  <h2 align="middle">Mesh Competition Extra Credit (optional)</h2>
-  <blockquote><b>
-    The final (optional) part for the mesh competition is where you have the opportunity to be creative and individual, 
-    so be sure to provide a good description of what you were going for, what you did, and how you did it.
-  </b></blockquote>
-
-  <p>
-    N/A
-  </p>
-
-
 
   <h2 align="middle">Extra Credit (optional)</h2>
     <blockquote><b>
