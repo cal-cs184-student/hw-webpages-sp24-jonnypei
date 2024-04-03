@@ -651,7 +651,21 @@
 
     <h3 align="left">Wind</h3>
     <p>
-      TODO: Bill
+      We implemented wind in ClothSimulator.cpp by adding to the <code>external_accelerations</code> vector. In order to not make the wind a constant force and allow for flapping, the following random force generating code was used.
+	<pre>
+int timer = 0; 
+Vector3D* wind = new Vector3D(10,30,-50);
+double windScalar = (rand() % 10 + 1);
+if (windScalar <= 7 || timer > 0) {
+  windScalar = 0.0;
+  timer -=1;
+} else {
+  windScalar = 1.0/windScalar;
+  timer = 100;
+}
+	</pre>
+
+	The goal was to create a force that could make gusts through the use of a timer and to vary the force with the <code>windScalar</code> parameter. 
     </p>
 
 </body>
